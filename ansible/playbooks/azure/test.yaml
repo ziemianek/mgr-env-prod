@@ -1,0 +1,14 @@
+- name: Test Azure hosts
+  hosts: azure
+  tasks:
+    - name: Print inventory hostname
+      debug:
+        msg: "Azure Host: {{ inventory_hostname }}"
+
+    - name: Print app_name common variable
+      debug:
+        msg: "App Name: {{ app_name }}"
+
+    - name: Test include role
+      ansible.builtin.include_role:
+        name: azure/example

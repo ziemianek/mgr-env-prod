@@ -1,0 +1,14 @@
+- name: Test AWS hosts
+  hosts: aws
+  tasks:
+    - name: Print inventory hostname
+      ansible.builtin.debug:
+        msg: "AWS Host: {{ inventory_hostname }}"
+
+    - name: Print app_name common variable
+      ansible.builtin.debug:
+        msg: "App Name: {{ app_name }}"
+
+    - name: Test include role
+      ansible.builtin.include_role:
+        name: aws/example
