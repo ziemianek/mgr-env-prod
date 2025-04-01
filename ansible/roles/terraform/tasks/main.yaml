@@ -9,4 +9,5 @@
     msg: "Invalid operation: '{{ operation }}'. Allowed values are 'init', 'apply' or 'destroy'."
   when: operation not in ['init', 'apply', 'destroy']
 
-- ansible.builtin.include_tasks: "{{ operation }}.yaml"
+- name: Execute Terraform operation
+  ansible.builtin.include_tasks: "{{ operation }}.yaml"
