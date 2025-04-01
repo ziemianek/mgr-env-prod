@@ -3,9 +3,6 @@
 name: ansible-lint
 
 on:
-#   push:
-#     branches: # Run on every branch
-#       - '**'
   pull_request: # Also run on pull requests for all branches
     branches:
       - '**'
@@ -14,7 +11,6 @@ jobs:
   lint:
     name: Run Ansible Lint
     runs-on: ubuntu-latest
-
     steps:
       # Step 1: Check out the code
       - uses: actions/checkout@v4
@@ -25,3 +21,4 @@ jobs:
         with:
           args: "" # Optional arguments for ansible-lint
           setup_python: "true" # Ensures Python is installed
+            python_version: "3.13" # Python version
