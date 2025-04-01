@@ -1,7 +1,7 @@
 ---
 - name: Create VPC in GCP
   hosts: gcloud
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: Include role for VPC creation
       ansible.builtin.include_role:

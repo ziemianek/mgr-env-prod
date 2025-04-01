@@ -6,15 +6,18 @@
     - name: Select workspace
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" workspace select "{{ tf_workspace }}" -no-color
+      register: tf_select_workspace_output
+      changed_when: tf_select_workspace_output.rc != 0
 
     - name: Destroy Terraform resources
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" destroy -auto-approve -no-color -var-file="{{ tf_vars_file_path }}"
-      register: terraform_destroy_result
+      register: tf_destroy_output
+      changed_when: tf_destroy_output.rc != 0
 
     - name: Display Terraform destroy result
       ansible.builtin.debug:
-        msg: "{{ terraform_destroy_result.stdout }}"
+        msg: "{{ tf_destroy_output.stdout }}"
 
 - name: Delete files
   ansible.builtin.file:
