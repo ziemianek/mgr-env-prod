@@ -4,6 +4,7 @@
   ansible.builtin.template:
     src: "{{ tf_vars_template_file_path }}"
     dest: "{{ tf_vars_file_path }}"
+    mode: "0600"
 
 - name: Run Terraform init actions
   environment: "{{ tf_environment }}"
@@ -11,11 +12,14 @@
     - name: Initialize Terraform
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" init -lock=true -input=false -no-color -backend-config="{{ tf_backend_config_file }}"
+      register: tf_init_output
+      changed_when: tf_init_output.rc != 0
 
     - name: Check if Terraform workspace exists
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" workspace list -no-color
       register: workspace_list
+      changed_when: workspace_list.rc != 0
 
     # todo: refactor this xD
     - name: Create or select Terraform workspace
@@ -26,20 +30,27 @@
           {% else %}
           terraform -chdir="{{ tf_directory }}" workspace new {{ tf_workspace }} -no-color
           {% endif %}
+      register: tf_workspace_output
+      changed_when: tf_workspace_output.rc != 0
 
     - name: Format Terraform files
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" fmt -no-color -check -recursive -diff
+      register: tf_fmt_output
+      changed_when: tf_fmt_output.rc != 0
 
     - name: Validate Terraform configuration
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" validate -no-color
+      register: tf_validate_output
+      changed_when: tf_validate_output.rc != 0
 
     - name: Run Terraform plan and save the plan file
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" plan -no-color -out="{{ tf_plan_file_path }}" -var-file="{{ tf_vars_file_path }}"
-      register: terraform_plan_result
+      register: tf_plan_output
+      changed_when: tf_plan_output.rc != 0
 
     - name: Display Terraform plan result
       ansible.builtin.debug:
-        msg: "{{ terraform_plan_result.stdout }}"
+        msg: "{{ tf_plan_output.stdout }}"
