@@ -1,0 +1,7 @@
+cloud_name: gcloud
+gcloud_region: europe-central2 # Warsaw
+gcloud_project_id: "{{ vault_gcloud_project_id }}"
+gcloud_vpc_name: magisterka-vpc
+gcloud_vpc_cidr: 192.168.0.0/24
+
+tf_backend_type: gcs

@@ -1,0 +1,2 @@
+- name: Run terraform destroy
+  ansible.builtin.include_tasks: terraform_destroy.yaml
