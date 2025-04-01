@@ -1,18 +1,20 @@
 ---
 
-- name: Select workspace
-  ansible.builtin.command:
-    cmd: terraform -chdir="{{ tf_directory }}" workspace select "{{ tf_workspace }}" -no-color
-
-- name: Destroy Terraform resources
+- name: Run Terraform destroy
   environment: "{{ tf_environment }}"
-  ansible.builtin.command:
-    cmd: terraform -chdir="{{ tf_directory }}" destroy -auto-approve -no-color -var-file="{{ tf_vars_file_path }}"
-  register: terraform_destroy_result
+  block:
+    - name: Select workspace
+      ansible.builtin.command:
+        cmd: terraform -chdir="{{ tf_directory }}" workspace select "{{ tf_workspace }}" -no-color
 
-- name: Display Terraform destroy result
-  ansible.builtin.debug:
-    msg: "{{ terraform_destroy_result.stdout }}"
+    - name: Destroy Terraform resources
+      ansible.builtin.command:
+        cmd: terraform -chdir="{{ tf_directory }}" destroy -auto-approve -no-color -var-file="{{ tf_vars_file_path }}"
+      register: terraform_destroy_result
+
+    - name: Display Terraform destroy result
+      ansible.builtin.debug:
+        msg: "{{ terraform_destroy_result.stdout }}"
 
 - name: Delete files
   ansible.builtin.file:
@@ -22,4 +24,4 @@
     - "{{ tf_plan_file_path }}"
     - "{{ tf_vars_file_path }}"
   loop_control:
-    label: "{{ file }}"
+    loop_var: file
