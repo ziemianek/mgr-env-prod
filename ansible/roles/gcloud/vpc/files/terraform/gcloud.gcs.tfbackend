@@ -1,2 +1,2 @@
 bucket = "magisterka-tfstate"
-prefix = "workspaces"
+prefix = "vpc"
