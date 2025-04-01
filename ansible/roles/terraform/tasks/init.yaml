@@ -10,12 +10,14 @@
   environment: "{{ tf_environment }}"
   block:
     - name: Initialize Terraform
-      ansible.builtin.command: terraform -chdir="{{ tf_directory }}" init -lock=true -input=false -no-color -backend-config="{{ tf_backend_config_file }}"
+      ansible.builtin.command: 
+        cmd: terraform -chdir="{{ tf_directory }}" init -lock=true -input=false -no-color -backend-config="{{ tf_backend_config_file }}"
       register: tf_init_output
       changed_when: tf_init_output.rc != 0
 
     - name: Check if Terraform workspace exists
-      ansible.builtin.command: terraform -chdir="{{ tf_directory }}" workspace list -no-color
+      ansible.builtin.command: 
+        cmd: terraform -chdir="{{ tf_directory }}" workspace list -no-color
       register: workspace_list
       changed_when: workspace_list.rc != 0
 
@@ -32,17 +34,20 @@
       changed_when: tf_workspace_output.rc != 0
 
     - name: Format Terraform files
-      ansible.builtin.command: terraform -chdir="{{ tf_directory }}" fmt -no-color -check -recursive -diff
+      ansible.builtin.command: 
+        cmd: terraform -chdir="{{ tf_directory }}" fmt -no-color -check -recursive -diff
       register: tf_fmt_output
       changed_when: tf_fmt_output.rc != 0
 
     - name: Validate Terraform configuration
-      ansible.builtin.command: terraform -chdir="{{ tf_directory }}" validate -no-color
+      ansible.builtin.command: 
+        cmd: terraform -chdir="{{ tf_directory }}" validate -no-color
       register: tf_validate_output
       changed_when: tf_validate_output.rc != 0
 
     - name: Run Terraform plan and save the plan file
-      ansible.builtin.command: terraform -chdir="{{ tf_directory }}" plan -no-color -out="{{ tf_plan_file_path }}" -var-file="{{ tf_vars_file_path }}"
+      ansible.builtin.command: 
+        cmd: terraform -chdir="{{ tf_directory }}" plan -no-color -out="{{ tf_plan_file_path }}" -var-file="{{ tf_vars_file_path }}"
       register: tf_plan_output
       changed_when: tf_plan_output.rc != 0
 
