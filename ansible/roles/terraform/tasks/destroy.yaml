@@ -1,0 +1,9 @@
+---
+- name: Destroy Terraform resources
+  ansible.builtin.command:
+    cmd: terraform destroy -auto-approve
+  register: terraform_destroy_result
+
+- name: Display Terraform destroy result
+  ansible.builtin.debug:
+    msg: "{{ terraform_destroy_result.stdout }}"
