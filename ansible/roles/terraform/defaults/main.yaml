@@ -1,3 +1,4 @@
+---
 # Terraform variables
 tf_directory: "{{ ansible_parent_role_paths[0] }}/files/terraform"
 tf_backend_config_file: "{{ cloud_name }}.{{ tf_backend_type }}.tfbackend"
