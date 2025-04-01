@@ -1,0 +1,13 @@
+---
+
+- name: Fail if this role doesn't have a parent role
+  ansible.builtin.fail:
+    msg: "This role must be included as a dependency or a parent role."
+  when: ansible_parent_role_names is not defined
+
+- name: Fail if mode is not valid
+  ansible.builtin.fail:
+    msg: "Invalid mode: {{ mode }}. Allowed values are 'init', 'apply' or 'destroy'."
+  when: mode not in ['init', 'apply', 'destroy']
+
+- ansible.builtin.include_tasks: "{{ mode }}.yaml"

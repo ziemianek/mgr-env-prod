@@ -1,0 +1,45 @@
+---
+# todo: Use https://docs.ansible.com/ansible/latest/collections/community/general/terraform_module.html
+- name: Render tfvars file from template
+  ansible.builtin.template:
+    src: "{{ tf_vars_template_file_path }}"
+    dest: "{{ tf_vars_file_path }}"
+
+- name: Run Terraform init actions
+  environment: "{{ tf_environment }}"
+  block:
+    - name: Initialize Terraform
+      ansible.builtin.command:
+        cmd: terraform -chdir="{{ tf_directory }}" init -lock=true -input=false -no-color -backend-config="{{ tf_backend_config_file }}"
+
+    - name: Check if Terraform workspace exists
+      ansible.builtin.command:
+        cmd: terraform -chdir="{{ tf_directory }}" workspace list -no-color
+      register: workspace_list
+
+    # todo: refactor this xD
+    - name: Create or select Terraform workspace
+      ansible.builtin.command:
+        cmd: >
+          {% if tf_workspace in workspace_list.stdout %}
+          terraform -chdir="{{ tf_directory }}" workspace select {{ tf_workspace }} -no-color
+          {% else %}
+          terraform -chdir="{{ tf_directory }}" workspace new {{ tf_workspace }} -no-color
+          {% endif %}
+
+    - name: Format Terraform files
+      ansible.builtin.command:
+        cmd: terraform -chdir="{{ tf_directory }}" fmt -no-color -check -recursive -diff
+
+    - name: Validate Terraform configuration
+      ansible.builtin.command:
+        cmd: terraform -chdir="{{ tf_directory }}" validate -no-color
+
+    - name: Run Terraform plan and save the plan file
+      ansible.builtin.command:
+        cmd: terraform -chdir="{{ tf_directory }}" plan -no-color -out="{{ tf_plan_file_path }}" -var-file="{{ tf_vars_file_path }}"
+      register: terraform_plan_result
+
+    - name: Display Terraform plan result
+      ansible.builtin.debug:
+        msg: "{{ terraform_plan_result.stdout }}"
