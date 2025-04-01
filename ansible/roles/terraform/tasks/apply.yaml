@@ -1,15 +1,11 @@
 ---
 - name: Apply Terraform changes using the saved plan file
+  environment: "{{ tf_environment }}"
   ansible.builtin.command:
-    cmd: terraform apply -input=false tfplan
+    cmd: terraform -chdir="{{ tf_directory }}" apply -input=false -no-color -auto-approve -var-file="{{ tf_vars_file_path }}" "{{ tf_plan_file_path }}"
   register: terraform_apply_result
 
 - name: Display Terraform apply result
   ansible.builtin.debug:
     msg: "{{ terraform_apply_result.stdout }}"
   when: terraform_apply_result.rc == 0
-
-- name: Delete TF plan file
-  ansible.builtin.file:
-    path: "{{ tf_plan_file }}"
-    state: absent
