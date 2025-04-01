@@ -1,3 +1,4 @@
+---
 cloud_name: gcloud
 gcloud_region: europe-central2 # Warsaw
 gcloud_project_id: "{{ vault_gcloud_project_id }}"

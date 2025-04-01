@@ -1,11 +1,12 @@
+---
 - name: "{{ service_name }} | Run Terraform Init"
   ansible.builtin.include_role:
     name: terraform
   vars:
-    mode: init
+    operation: init
 
 - name: "{{ service_name }} | Run Terraform Apply"
   ansible.builtin.include_role:
     name: terraform
   vars:
-    mode: apply
+    operation: apply
