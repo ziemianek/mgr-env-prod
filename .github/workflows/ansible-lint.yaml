@@ -1,0 +1,27 @@
+# .github/workflows/ansible-lint.yml
+
+name: ansible-lint
+
+on:
+#   push:
+#     branches: # Run on every branch
+#       - '**'
+  pull_request: # Also run on pull requests for all branches
+    branches:
+      - '**'
+
+jobs:
+  lint:
+    name: Run Ansible Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code
+      - uses: actions/checkout@v4
+
+      # Step 2: Run Ansible Lint
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint-action@main
+        with:
+          args: "" # Optional arguments for ansible-lint
+          setup_python: "true" # Ensures Python is installed
