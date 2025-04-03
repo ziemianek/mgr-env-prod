@@ -1,0 +1,10 @@
+---
+- name: Create GKE Cluster
+  hosts: gcloud_ecomm
+  gather_facts: false
+  tasks:
+    - name: Include role for cluster creation
+      ansible.builtin.include_role:
+        name: gcloud/gke_cluster
+      vars:
+        mode: create
