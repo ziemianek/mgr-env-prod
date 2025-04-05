@@ -1,3 +1,2 @@
-
 gke_cluster_name: "{{ app_name }}-gke-cluster"
 gke_node_count: 2
