@@ -1,0 +1,2 @@
+bucket = "magisterka-tfstate"
+prefix = "gke_cluster_addons/ecomm/terraform.tfstate"
