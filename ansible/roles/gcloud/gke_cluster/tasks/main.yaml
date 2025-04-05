@@ -1,0 +1,3 @@
+---
+- name: Google Cloud GKE Cluster
+  ansible.builtin.include_tasks: "{{ mode }}.yaml"
