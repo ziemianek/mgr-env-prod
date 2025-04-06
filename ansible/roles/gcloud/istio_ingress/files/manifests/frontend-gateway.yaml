@@ -20,21 +20,21 @@ spec:
   selector:
     istio: ingress
   servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "*"
-  - port:
-      number: 443
-      name: https
-      protocol: HTTPS
-    hosts:
-    - "*"
-    tls:
-      mode: SIMPLE
-      credentialName: localhost-tls
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - "*"
+      tls:
+        mode: SIMPLE
+        credentialName: localhost-tls
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -42,14 +42,13 @@ metadata:
   name: frontend-ingress
 spec:
   hosts:
-  - "*"
+    - "*"
   gateways:
-  - frontend-gateway
+    - frontend-gateway
   http:
     - match:
         - uri:
             prefix: /
-
       route:
         - destination:
             host: frontend
