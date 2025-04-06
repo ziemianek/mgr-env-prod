@@ -1,3 +1,6 @@
 ---
-- ansible.builtin.import_playbook: gke_cluster/ecomm/create.yaml
-- ansible.builtin.import_playbook: gke_cluster_addons/ecomm/create.yaml
+- name: Create GKE Cluster
+  ansible.builtin.import_playbook: gke_cluster/ecomm/create.yaml
+
+- name: Create GKE Cluster Addons
+  ansible.builtin.import_playbook: gke_cluster_addons/ecomm/create.yaml
