@@ -1,0 +1,6 @@
+---
+- name: Delete GKE Cluster Addons
+  ansible.builtin.import_playbook: gke_cluster_addons/ecomm/delete.yaml
+
+- name: Delete GKE Cluster
+  ansible.builtin.import_playbook: gke_cluster/ecomm/delete.yaml
