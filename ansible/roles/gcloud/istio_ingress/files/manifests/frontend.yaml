@@ -18,10 +18,10 @@ metadata:
   name: frontend
 spec:
   hosts:
-  - "frontend.default.svc.cluster.local"
+    - "frontend.default.svc.cluster.local"
   http:
-  - route:
-    - destination:
-        host: frontend
-        port:
-          number: 80
+    - route:
+      - destination:
+          host: frontend
+          port:
+            number: 80
