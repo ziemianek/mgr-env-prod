@@ -33,3 +33,15 @@ variable "node_count" {
   type        = number
   nullable    = false
 }
+
+variable "machine_type" {
+  description = "Machine type for the node pool"
+  type        = string
+  nullable    = false
+}
+
+variable "disk_size" {
+  description = "Disk size in GB for the node pool"
+  type        = number
+  nullable    = false
+}
