@@ -1,0 +1,3 @@
+---
+- ansible.builtin.import_playbook: gke_cluster/ecomm/delete.yaml
+- ansible.builtin.import_playbook: gke_cluster_addons/ecomm/delete.yaml
