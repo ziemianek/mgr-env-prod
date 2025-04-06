@@ -21,7 +21,7 @@ spec:
     - "frontend.default.svc.cluster.local"
   http:
     - route:
-      - destination:
-          host: frontend
-          port:
-            number: 80
+        - destination:
+            host: frontend
+            port:
+              number: 80
