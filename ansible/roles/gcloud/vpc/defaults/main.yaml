@@ -1,9 +1,2 @@
 ---
 service_name: vpc
-
-# cant be there - typically it is set in the terraform role
-# but now idk how to set it as common for all apps in gke
-# maybe move to group-vars
-tf_backend_config_file: "{{ cloud_name }}.{{ tf_backend_type }}.tfbackend"
-tf_workspace: "{{ cloud_name }}_{{ service_name }}"
-tf_destination_directory: "/tmp/{{ cloud_name }}"

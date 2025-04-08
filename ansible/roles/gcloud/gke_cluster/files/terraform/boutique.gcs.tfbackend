@@ -1,2 +1,2 @@
 bucket = "magisterka-tfstate"
-prefix = "boutique/gke_cluster/terraform.tfstate"
+prefix = "boutique/gke_cluster"
