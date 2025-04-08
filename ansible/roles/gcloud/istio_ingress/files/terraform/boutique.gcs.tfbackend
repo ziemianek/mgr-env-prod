@@ -1,2 +1,2 @@
 bucket = "magisterka-tfstate"
-prefix = "boutique/istio_ingress/terraform.tfstate"
+prefix = "boutique/istio_ingress"

@@ -1,6 +1,6 @@
 ---
 - name: Delete VPC in GCP
-  hosts: gcloud
+  hosts: gcloud_common
   gather_facts: false
   tasks:
     - name: Include role for VPC deletion
