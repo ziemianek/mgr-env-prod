@@ -1,5 +1,17 @@
 ---
 
+- name: Create directory to store files
+  ansible.builtin.file:
+    path: "{{ tf_destination_directory }}"
+    state: directory
+    mode: "0755"  #TODO: verify minimum permissions for tf files
+
+- name: Render tfvars file from template
+  ansible.builtin.template:
+    src: "{{ tf_vars_template_file_path }}"
+    dest: "{{ tf_vars_file_path }}"
+    mode: "0600"
+
 - name: Run Terraform destroy
   environment: "{{ tf_environment }}"
   block:
@@ -28,3 +40,8 @@
     - "{{ tf_vars_file_path }}"
   loop_control:
     loop_var: file
+
+- name: Delete directory for tf files
+  ansible.builtin.file:
+    path: "{{ tf_destination_directory }}"
+    state: absent
