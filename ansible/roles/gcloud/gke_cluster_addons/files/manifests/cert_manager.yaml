@@ -24,3 +24,33 @@ metadata:
   name: self-signed
 spec:
   selfSigned: {}
+---
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: localhost-cert
+#   namespace: istio-ingress
+# spec:
+#   secretName: localhost-tls
+#   issuerRef:
+#     name: staging-cluster-issuer
+#     kind: ClusterIssuer
+#     group: cert-manager.io
+#   commonName: localhost
+#   dnsNames:
+#     - localhost
+
+# self signed for local development
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: localhost-cert
+  namespace: shop
+spec:
+  secretName: localhost-tls
+  issuerRef:
+    name: self-signed
+    kind: ClusterIssuer
+  commonName: localhost
+  dnsNames:
+    - localhost
