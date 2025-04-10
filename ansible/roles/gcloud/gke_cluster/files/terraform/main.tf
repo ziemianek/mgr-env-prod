@@ -20,8 +20,8 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = var.node_count
 
   node_config {
-    machine_type = "e2-medium"
-    disk_size_gb = 20
+    machine_type = var.machine_type
+    disk_size_gb = var.disk_size
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
