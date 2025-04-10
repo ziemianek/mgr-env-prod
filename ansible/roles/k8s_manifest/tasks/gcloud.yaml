@@ -1,0 +1,14 @@
+---
+- name: "Get kubeconfig for the '{{ gke_cluster_name }}' cluster"
+  ansible.builtin.command: >
+    gcloud container clusters get-credentials {{ gke_cluster_name }}
+    --project {{ gcloud_project_id }}
+    --region {{ gcloud_region }}
+  # --kubeconfig {{ k8s_kubeconfig_path }}
+  register: kubeconfig_result
+
+- name: "{{ operation | title }} Kubernetes manifests"
+  ansible.builtin.include_tasks: handle_manifest.yaml
+  loop: "{{ k8s_manifests }}"
+  loop_control:
+    loop_var: manifest

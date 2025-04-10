@@ -1,4 +1,10 @@
 ---
+- name: Delete Kubernetes manifests
+  ansible.builtin.include_role:
+    name: k8s_manifest
+  vars:
+    operation: delete
+
 - name: "{{ service_name }} | Run Terraform Destroy"
   ansible.builtin.include_role:
     name: terraform
