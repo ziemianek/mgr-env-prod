@@ -6,9 +6,9 @@
 - name: "{{ operation | title }} {{ manifest }}"
   no_log: true
   kubernetes.core.k8s:
-    # kubeconfig: "{{ k8s_kubeconfig_path }}"
     state: "{{ k8s_manifest_state }}"
     definition: "{{ lookup('file', '{{ k8s_manifest_path }}') | from_yaml_all }}"
     validate:
       fail_on_error: yes # fail on validation errors
       strict: yes # check for unexpected properties
+    # wait: true  # FIXME: Doesnt work with multiple objects in 1 manifest

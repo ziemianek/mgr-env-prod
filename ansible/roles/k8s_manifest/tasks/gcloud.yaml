@@ -5,9 +5,8 @@
     --project {{ gcloud_project_id }}
     --region {{ gcloud_region }}
   # --kubeconfig {{ k8s_kubeconfig_path }}
-  register: kubeconfig_result
 
-- name: "{{ operation | title }} Kubernetes manifests"
+- name: "{{ operation | title }} Kubernetes resources from manifest"
   ansible.builtin.include_tasks: handle_manifest.yaml
   loop: "{{ k8s_manifests }}"
   loop_control:
