@@ -7,6 +7,3 @@ tf_vars_template_file_path: "{{ ansible_parent_role_paths[0] }}/templates/tfvars
 tf_destination_directory: "/tmp/{{ cloud_name }}_{{ app_name }}"
 tf_vars_file_path: "{{ tf_destination_directory }}/{{ tf_workspace }}.tfvars"
 tf_plan_file_path: "{{ tf_destination_directory }}/{{ tf_workspace }}.tfplan"
-
-tf_environment:
-  GOOGLE_CREDENTIALS: "{{ vault_gcloud_credentials }}"

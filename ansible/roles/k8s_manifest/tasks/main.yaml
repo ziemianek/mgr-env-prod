@@ -1,0 +1,17 @@
+---
+- name: Fail if this role doesn't have a parent role
+  ansible.builtin.fail:
+    msg: "This role can only be run from within another role."
+  when: ansible_parent_role_names is not defined
+
+- name: Fail if operation is not valid
+  ansible.builtin.fail:
+    msg: "Invalid operation: '{{ operation }}'. Allowed values are 'create' or 'delete'."
+  when: operation not in ['create', 'delete']
+
+- name: Set deployment state based on operation
+  ansible.builtin.set_fact:
+    k8s_manifest_state: "{{ 'present' if operation == 'create' else 'absent' }}"
+
+- name: Include task based on cloud name
+  ansible.builtin.include_tasks: "{{ cloud_name }}.yaml"

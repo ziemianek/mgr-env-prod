@@ -11,10 +11,8 @@
   vars:
     operation: apply
 
-# - name: >-
-#     (Alternative) Read definition file from the Ansible controller file system.
-#     In this case, the definition file contains multiple YAML documents, separated by ---.
-#     If the definition file has been encrypted with Ansible Vault it will automatically be decrypted.
-#   kubernetes.core.k8s:
-#     state: present
-#     definition: "{{ lookup('file', '/testing/deployment.yml') | from_yaml_all }}"
+- name: Deploy Kubernetes manifests
+  ansible.builtin.include_role:
+    name: k8s_manifest
+  vars:
+    operation: create

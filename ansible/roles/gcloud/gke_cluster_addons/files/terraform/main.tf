@@ -27,8 +27,6 @@ resource "helm_release" "istio_base" {
   chart      = "base"
   version    = "1.25.0"
   namespace  = kubernetes_namespace.istio_system.metadata[0].name
-
-  create_namespace = false
 }
 
 resource "helm_release" "istiod" {
@@ -41,35 +39,17 @@ resource "helm_release" "istiod" {
   depends_on = [helm_release.istio_base]
 }
 
-# I would love to use this but too much work for now
-# Id have to separate everything into separate files
-# Since i cannot deploy manifest that contains multiple resources separated by ---
-# # Istio Addons
-# resource "kubernetes_manifest" "prometheus" {
-#   manifest   = yamldecode(file("../manifests/istio_addons/prometheus.yaml"))
-#   depends_on = [helm_release.istiod]
+# Cert-manager
+# resource "kubernetes_namespace" "cert_manager" {
+#   metadata {
+#     name = "cert-manager"
+#   }
 # }
 
-# resource "kubernetes_manifest" "grafana" {
-#   manifest   = yamldecode(file("../manifests/istio_addons/grafana.yaml"))
-#   depends_on = [helm_release.istiod]
-# }
-
-# resource "kubernetes_manifest" "kiali" {
-#   manifest   = yamldecode(file("../manifests/istio_addons/kiali.yaml"))
-#   depends_on = [helm_release.istiod]
-# }
-
-# # Cert Manager
-# resource "kubernetes_manifest" "cert_manager_issuer" {
-#   manifest = yamldecode(file("../manifests/cert_manager/cluster_issuer.yaml"))
-# }
-
-# resource "kubernetes_manifest" "cert_manager_certificate" {
-#   manifest = yamldecode(file("../manifests/cert_manager/certificate.yaml"))
-# }
-
-# # Chaos Mesh
-# resource "kubernetes_manifest" "chaos_mesh" {
-#   manifest = yamldecode(file("../manifests/chaos_mesh/chaos_mesh.yaml"))
+# resource "helm_release" "cert_manager" {
+#   name       = "cert-manager"
+#   repository = "https://charts.jetstack.io"
+#   chart      = "cert-manager"
+#   version    = "v1.17.1"
+#   namespace  = kubernetes_namespace.cert_manager.metadata[0].name
 # }

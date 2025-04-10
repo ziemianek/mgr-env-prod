@@ -8,6 +8,8 @@ gcloud_subnet_name: magisterka-subnet
 
 # Terraform
 tf_backend_type: gcs
+tf_environment:
+  GOOGLE_CREDENTIALS: "{{ vault_gcloud_credentials }}"
 
 # GKE
 gke_cluster_name: "{{ app_name }}-gke-cluster"
