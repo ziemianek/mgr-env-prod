@@ -2,4 +2,3 @@ requirements.in
 **/.terraform/*
 **/.vscode/*
 **/.DS_Store
-.github/*.md
