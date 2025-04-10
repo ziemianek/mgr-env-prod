@@ -1,0 +1,56 @@
+---
+# apiVersion: cert-manager.io/v1
+# kind: ClusterIssuer
+# metadata:
+#   name: staging-cluster-issuer
+# spec:
+#   acme:
+#     # Staging Environment: must be used for testing before using prod env
+#     # Letsencrypt has a strict rate limit.
+#     server: https://acme-staging-v02.api.letsencrypt.org/directory
+#     email: mziemianek3@gmail.com
+#     privateKeySecretRef:
+#       name: staging-cluster-issuer
+#     solvers:
+#       - selector: {}
+#         http01:
+#           ingress:
+#             class: istio
+
+# self signed for local development
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: self-signed
+spec:
+  selfSigned: {}
+---
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: localhost-cert
+#   namespace: istio-ingress
+# spec:
+#   secretName: localhost-tls
+#   issuerRef:
+#     name: staging-cluster-issuer
+#     kind: ClusterIssuer
+#     group: cert-manager.io
+#   commonName: localhost
+#   dnsNames:
+#     - localhost
+
+# self signed for local development
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: localhost-cert
+  namespace: shop
+spec:
+  secretName: localhost-tls
+  issuerRef:
+    name: self-signed
+    kind: ClusterIssuer
+  commonName: localhost
+  dnsNames:
+    - localhost

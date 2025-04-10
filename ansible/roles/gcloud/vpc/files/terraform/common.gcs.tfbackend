@@ -1,0 +1,2 @@
+bucket = "magisterka-tfstate"
+prefix = "common/vpc"

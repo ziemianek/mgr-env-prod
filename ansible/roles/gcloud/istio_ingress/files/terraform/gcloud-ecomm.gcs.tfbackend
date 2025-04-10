@@ -1,2 +1,0 @@
-bucket = "magisterka-tfstate"
-prefix = "istio_ingress/ecomm/terraform.tfstate"
