@@ -8,12 +8,12 @@
   loop_control:
     loop_var: file
 
-- name: Block wrapper
+- name: "{{ service_name }} | Block wrapper"
   block:
-    - name: Google Cloud GKE Cluster Istio Ingress
+    - name: "{{ service_name }} | Google Cloud GKE Cluster Istio Ingress"
       ansible.builtin.include_tasks: "{{ mode }}.yaml"
   always:
-    - name: Cleanup files
+    - name: "{{ service_name }} | Cleanup files"
       ansible.builtin.file:
         path: "{{ role_path }}/files/manifests/{{ file }}"
         state: absent

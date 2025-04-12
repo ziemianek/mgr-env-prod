@@ -1,37 +1,37 @@
 ---
 
-- name: Create directory to store files
+- name: "{{ service_name }} | Create directory to store files"
   ansible.builtin.file:
     path: "{{ tf_destination_directory }}"
     state: directory
     mode: "0755"  # TODO: verify minimum permissions for tf files
 
-- name: Render tfvars file from template
+- name: "{{ service_name }} | Render tfvars file from template"
   ansible.builtin.template:
     src: "{{ tf_vars_template_file_path }}"
     dest: "{{ tf_vars_file_path }}"
     mode: "0600"
 
-- name: Run Terraform destroy
+- name: "{{ service_name }} | Run Terraform destroy"
   environment: "{{ tf_environment }}"
   block:
-    - name: Select workspace
+    - name: "{{ service_name }} | Select workspace"
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" workspace select "{{ tf_workspace }}" -no-color
       register: tf_select_workspace_output
       changed_when: tf_select_workspace_output.rc != 0
 
-    - name: Destroy Terraform resources
+    - name: "{{ service_name }} | Destroy Terraform resources"
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" destroy -auto-approve -no-color -var-file="{{ tf_vars_file_path }}"
       register: tf_destroy_output
       changed_when: tf_destroy_output.rc != 0
 
-    - name: Display Terraform destroy result
+    - name: "{{ service_name }} | Display Terraform destroy result"
       ansible.builtin.debug:
         msg: "{{ tf_destroy_output.stdout }}"
 
-- name: Delete files
+- name: "{{ service_name }} | Delete files"
   ansible.builtin.file:
     path: "{{ file }}"
     state: absent
@@ -41,7 +41,7 @@
   loop_control:
     loop_var: file
 
-- name: Delete directory for tf files
+- name: "{{ service_name }} | Delete directory for tf files"
   ansible.builtin.file:
     path: "{{ tf_destination_directory }}"
     state: absent
