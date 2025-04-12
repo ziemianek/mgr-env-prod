@@ -1,11 +1,11 @@
 ---
-- name: Apply Terraform changes using the saved plan file
+- name: "{{ service_name }} | Apply Terraform changes using the saved plan file"
   environment: "{{ tf_environment }}"
   ansible.builtin.command:
     cmd: terraform -chdir="{{ tf_directory }}" apply -input=false -no-color -auto-approve -var-file="{{ tf_vars_file_path }}" "{{ tf_plan_file_path }}"
   register: tf_apply_output
   changed_when: tf_apply_output.rc != 0
 
-- name: Display Terraform apply result
+- name: "{{ service_name }} | Display Terraform apply result"
   ansible.builtin.debug:
     msg: "{{ tf_apply_output.stdout }}"

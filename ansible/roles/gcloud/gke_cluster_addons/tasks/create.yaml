@@ -4,7 +4,7 @@
 # cert-manager CRDs are not yet installed on the Kubernetes API server"
 # this must be installed before installing cert-manager helm chart
 # https://stackoverflow.com/questions/78091886/issue-with-cert-manager-installation
-- name: Kubectl apply cert-manager CRDs
+- name: "{{ service_name }} | Kubectl apply cert-manager CRDs"
   ansible.builtin.command: |
     kubectl apply \
       -f https://github.com/cert-manager/cert-manager/releases/download/v1.17.1/cert-manager.crds.yaml
@@ -27,4 +27,3 @@
     name: k8s_manifest
   vars:
     operation: create
-    cluster_name: "{{ gke_cluster_name }}" # FIXME: Change gke_cluster_name to cluster_name in grooup vars
