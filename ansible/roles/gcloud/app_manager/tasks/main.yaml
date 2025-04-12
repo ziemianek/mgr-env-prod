@@ -3,10 +3,8 @@
   ansible.builtin.template:
     src: "templates/{{ file }}.j2"
     dest: "{{ role_path }}/files/manifests/{{ file }}"
-    mode: 0644
-  loop:
-    - frontend.yaml
-    - frontend-gateway.yaml
+    mode: "0644"
+  loop: "{{ k8s_manifests }}"
   loop_control:
     loop_var: file
 
@@ -19,8 +17,6 @@
       ansible.builtin.file:
         path: "{{ role_path }}/files/manifests/{{ file }}"
         state: absent
-      loop:
-        - frontend.yaml
-        - frontend-gateway.yaml
+      loop: "{{ k8s_manifests }}"
       loop_control:
         loop_var: file

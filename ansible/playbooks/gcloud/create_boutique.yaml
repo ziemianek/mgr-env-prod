@@ -5,5 +5,5 @@
 - name: Create GKE Cluster Addons
   ansible.builtin.import_playbook: gke_cluster_addons/boutique/create.yaml
 
-- name: Create GKE Cluster Istio Ingress
-  ansible.builtin.import_playbook: istio_ingress/boutique/create.yaml
+- name: Create Application
+  ansible.builtin.import_playbook: app_manager/boutique/create.yaml

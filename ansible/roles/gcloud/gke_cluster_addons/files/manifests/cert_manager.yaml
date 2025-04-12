@@ -1,56 +1,29 @@
 ---
-# apiVersion: cert-manager.io/v1
-# kind: ClusterIssuer
-# metadata:
-#   name: staging-cluster-issuer
-# spec:
-#   acme:
-#     # Staging Environment: must be used for testing before using prod env
-#     # Letsencrypt has a strict rate limit.
-#     server: https://acme-staging-v02.api.letsencrypt.org/directory
-#     email: mziemianek3@gmail.com
-#     privateKeySecretRef:
-#       name: staging-cluster-issuer
-#     solvers:
-#       - selector: {}
-#         http01:
-#           ingress:
-#             class: istio
-
-# self signed for local development
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: self-signed
+  name: letsencrypt-staging
 spec:
-  selfSigned: {}
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: mziemianek3@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-staging-account-key
+    solvers:
+      - http01:
+          ingress:
+            class: istio
 ---
-# apiVersion: cert-manager.io/v1
-# kind: Certificate
-# metadata:
-#   name: localhost-cert
-#   namespace: istio-ingress
-# spec:
-#   secretName: localhost-tls
-#   issuerRef:
-#     name: staging-cluster-issuer
-#     kind: ClusterIssuer
-#     group: cert-manager.io
-#   commonName: localhost
-#   dnsNames:
-#     - localhost
-
-# self signed for local development
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: localhost-cert
-  namespace: shop
+  name: boutique-tls
+  namespace: boutique
 spec:
-  secretName: localhost-tls
+  secretName: boutique-tls-secret
   issuerRef:
-    name: self-signed
+    name: letsencrypt-staging
     kind: ClusterIssuer
-  commonName: localhost
+  commonName: boutique.ziemian.top
   dnsNames:
-    - localhost
+    - boutique.ziemian.top
