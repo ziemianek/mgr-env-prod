@@ -1,4 +1,11 @@
 ---
+- name: "{{ service_name }} | Delete Kubernetes manifests"
+  ansible.builtin.include_role:
+    name: k8s_manifest
+  vars:
+    operation: delete
+    cluster_name: "{{ gke_cluster_name }}" # FIXME: Change gke_cluster_name to cluster_name in group vars
+
 - name: "{{ service_name }} | Run Terraform Destroy"
   ansible.builtin.include_role:
     name: terraform

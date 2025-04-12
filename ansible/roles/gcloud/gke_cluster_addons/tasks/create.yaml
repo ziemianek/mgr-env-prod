@@ -11,7 +11,7 @@
   vars:
     operation: apply
 
-- name: Deploy Kubernetes manifests
+- name: "{{ service_name }} | Deploy Kubernetes manifests"
   ansible.builtin.include_role:
     name: k8s_manifest
   vars:

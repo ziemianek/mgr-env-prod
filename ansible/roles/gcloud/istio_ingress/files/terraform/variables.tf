@@ -15,3 +15,9 @@ variable "cluster_name" {
   type        = string
   nullable    = false
 }
+
+variable "namespace" {
+  description = "Namespace for the application"
+  type        = string
+  nullable    = false
+}

@@ -1,3 +1,26 @@
 ---
-- name: Google Cloud GKE Cluster Istio Ingress
-  ansible.builtin.include_tasks: "{{ mode }}.yaml"
+- name: "{{ service_name }} | Render manifests templates"
+  ansible.builtin.template:
+    src: "templates/{{ file }}.j2"
+    dest: "{{ role_path }}/files/manifests/{{ file }}"
+    mode: 0644
+  loop:
+    - frontend.yaml
+    - frontend-gateway.yaml
+  loop_control:
+    loop_var: file
+
+- name: Block wrapper
+  block:
+    - name: Google Cloud GKE Cluster Istio Ingress
+      ansible.builtin.include_tasks: "{{ mode }}.yaml"
+  always:
+    - name: Cleanup files
+      ansible.builtin.file:
+        path: "{{ role_path }}/files/manifests/{{ file }}"
+        state: absent
+      loop:
+        - frontend.yaml
+        - frontend-gateway.yaml
+      loop_control:
+        loop_var: file
