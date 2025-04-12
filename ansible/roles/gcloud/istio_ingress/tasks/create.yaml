@@ -16,4 +16,4 @@
     name: k8s_manifest
   vars:
     operation: create
-    cluster_name: "{{ gke_cluster_name }}" # FIXME: Change gke_cluster_name to cluster_name in grooup vars
+    cluster_name: "{{ gke_cluster_name }}" # FIXME: Change gke_cluster_name to cluster_name in group vars
