@@ -1,4 +1,14 @@
 ---
+# todo: refactor this - download file and use k8s_manifests role
+# to get rid of the error:
+# cert-manager CRDs are not yet installed on the Kubernetes API server"
+# this must be installed before installing cert-manager helm chart
+# https://stackoverflow.com/questions/78091886/issue-with-cert-manager-installation
+- name: Kubectl apply cert-manager CRDs
+  ansible.builtin.command: |
+    kubectl apply \
+      -f https://github.com/cert-manager/cert-manager/releases/download/v1.17.1/cert-manager.crds.yaml
+
 - name: "{{ service_name }} | Run Terraform Init"
   ansible.builtin.include_role:
     name: terraform

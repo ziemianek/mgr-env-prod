@@ -1,0 +1,8 @@
+service_name: app_manager
+
+k8s_manifests:
+  - frontend.yaml
+  - frontend-gateway.yaml
+  - application.yaml
+
+app_helm_chart_path: "apps/{{ app_name }}/helm-chart"
