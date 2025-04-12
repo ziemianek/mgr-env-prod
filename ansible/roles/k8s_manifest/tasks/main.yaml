@@ -15,11 +15,12 @@
 
 # Wrapped in a block to pass env variables
 # https://github.com/ansible/ansible/issues/53626
-- name: Include task based on cloud name
+- name: Block wrapper
   environment:
     KUBECONFIG: "{{ k8s_kubeconfig_path }}"
   block:
-    - ansible.builtin.include_tasks: "{{ cloud_name }}.yaml"
+    - name: Include task based on cloud name
+      ansible.builtin.include_tasks: "{{ cloud_name }}.yaml"
   always:
     - name: Clean kubeconfig
       ansible.builtin.file:
