@@ -1,7 +1,7 @@
 service_name: gke_cluster_addons
 
 k8s_manifests:
-  # - cert_manager.yaml
+  - cert_manager.yaml
   # - chaos_mesh.yaml
   - grafana.yaml
   - prometheus.yaml

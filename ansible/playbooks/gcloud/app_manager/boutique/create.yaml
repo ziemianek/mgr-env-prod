@@ -1,10 +1,10 @@
 ---
-- name: Create GKE Cluster Istio Ingress
+- name: "Create {{ app_name | title }} application"
   hosts: gcloud_boutique
   gather_facts: false
   tasks:
-    - name: Include role for cluster addons creation
+    - name: Include role for app management
       ansible.builtin.include_role:
-        name: gcloud/istio_ingress
+        name: gcloud/app_manager
       vars:
         mode: create
