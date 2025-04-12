@@ -4,7 +4,7 @@
     gcloud container clusters get-credentials {{ gke_cluster_name }}
     --project {{ gcloud_project_id }}
     --region {{ gcloud_region }}
-  # --kubeconfig {{ k8s_kubeconfig_path }}
+  changed_when: true
 
 - name: "{{ operation | title }} Kubernetes resources from manifest"
   ansible.builtin.include_tasks: handle_manifest.yaml

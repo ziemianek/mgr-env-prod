@@ -1,10 +1,10 @@
 ---
 - name: Set manifest path
-  set_fact:
+  ansible.builtin.set_fact:
     k8s_manifest_path: "{{ k8s_directory }}/{{ manifest }}"
 
 - name: "{{ operation | title }} {{ manifest }}"
-  # no_log: true
+  no_log: true
   kubernetes.core.k8s:
     state: "{{ k8s_manifest_state }}"
     definition: "{{ lookup('file', '{{ k8s_manifest_path }}') | from_yaml_all }}"
