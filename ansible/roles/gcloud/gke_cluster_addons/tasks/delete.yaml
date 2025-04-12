@@ -11,4 +11,3 @@
     name: terraform
   vars:
     operation: destroy
-
