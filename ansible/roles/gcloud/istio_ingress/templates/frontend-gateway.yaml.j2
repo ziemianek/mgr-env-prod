@@ -13,15 +13,46 @@
 # limitations under the License.
 
 apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: frontend-gateway
+  namespace: {{ app_name }}
+spec:
+  selector:
+    istio: ingress
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - "*"
+      tls:
+        mode: SIMPLE
+        credentialName: localhost-tls
+---
+apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: frontend
+  name: frontend-ingress
+  namespace: {{ app_name }}
 spec:
   hosts:
-    - "frontend.default.svc.cluster.local"
+    - "*"
+  gateways:
+    - frontend-gateway
   http:
-    - route:
+    - match:
+        - uri:
+            prefix: /
+      route:
         - destination:
             host: frontend
-            port:
-              number: 80
+            # port:
+            #   number: 80

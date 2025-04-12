@@ -1,1 +1,5 @@
 service_name: istio_ingress
+
+k8s_manifests:
+  - frontend.yaml
+  - frontend-gateway.yaml

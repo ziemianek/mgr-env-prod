@@ -1,4 +1,7 @@
 ---
+- name: Delete GKE Cluster Istio Ingress
+  ansible.builtin.import_playbook: istio_ingress/boutique/delete.yaml
+
 - name: Delete GKE Cluster Addons
   ansible.builtin.import_playbook: gke_cluster_addons/boutique/delete.yaml
 
