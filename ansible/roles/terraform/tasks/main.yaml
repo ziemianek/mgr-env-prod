@@ -1,13 +1,13 @@
 ---
-- name: Fail if this role doesn't have a parent role
+- name: "{{ service_name }} | Fail if this role doesn't have a parent role"
   ansible.builtin.fail:
     msg: "This role can only be run from within another role."
   when: ansible_parent_role_names is not defined
 
-- name: Fail if operation is not valid
+- name: "{{ service_name }} | Fail if operation is not valid"
   ansible.builtin.fail:
     msg: "Invalid operation: '{{ operation }}'. Allowed values are 'init', 'apply' or 'destroy'."
   when: operation not in ['init', 'apply', 'destroy']
 
-- name: Execute Terraform operation
+- name: "{{ service_name }} | Execute Terraform operation"
   ansible.builtin.include_tasks: "{{ operation }}.yaml"

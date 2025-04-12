@@ -1,35 +1,35 @@
 ---
 
-- name: Create directory to store files
+- name: "{{ service_name }} | Create directory to store files"
   ansible.builtin.file:
     path: "{{ tf_destination_directory }}"
     state: directory
     mode: "0755"
 
 # todo: Use https://docs.ansible.com/ansible/latest/collections/community/general/terraform_module.html
-- name: Render tfvars file from template
+- name: "{{ service_name }} | Render tfvars file from template"
   ansible.builtin.template:
     src: "{{ tf_vars_template_file_path }}"
     dest: "{{ tf_vars_file_path }}"
     mode: "0600"
 
-- name: Run Terraform init actions
+- name: "{{ service_name }} | Run Terraform init actions"
   environment: "{{ tf_environment }}"
   block:
-    - name: Initialize Terraform
+    - name: "{{ service_name }} | Initialize Terraform"
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" init -lock=true -input=false -no-color -backend-config="{{ tf_backend_config_file }}"
       register: tf_init_output
       changed_when: tf_init_output.rc != 0
 
-    - name: Check if Terraform workspace exists
+    - name: "{{ service_name }} | Check if Terraform workspace exists"
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" workspace list -no-color
       register: workspace_list
       changed_when: workspace_list.rc != 0
 
     # todo: refactor this xD
-    - name: Create or select Terraform workspace
+    - name: "{{ service_name }} | Create or select Terraform workspace"
       ansible.builtin.command:
         cmd: >
           {% if tf_workspace in workspace_list.stdout %}
@@ -40,24 +40,24 @@
       register: tf_workspace_output
       changed_when: tf_workspace_output.rc != 0
 
-    - name: Format Terraform files
+    - name: "{{ service_name }} | Format Terraform files"
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" fmt -no-color -check -recursive -diff
       register: tf_fmt_output
       changed_when: tf_fmt_output.rc != 0
 
-    - name: Validate Terraform configuration
+    - name: "{{ service_name }} | Validate Terraform configuration"
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" validate -no-color
       register: tf_validate_output
       changed_when: tf_validate_output.rc != 0
 
-    - name: Run Terraform plan and save the plan file
+    - name: "{{ service_name }} | Run Terraform plan and save the plan file"
       ansible.builtin.command:
         cmd: terraform -chdir="{{ tf_directory }}" plan -no-color -out="{{ tf_plan_file_path }}" -var-file="{{ tf_vars_file_path }}"
       register: tf_plan_output
       changed_when: tf_plan_output.rc != 0
 
-    - name: Display Terraform plan result
+    - name: "{{ service_name }} | Display Terraform plan result"
       ansible.builtin.debug:
         msg: "{{ tf_plan_output.stdout }}"
