@@ -19,6 +19,9 @@ resource "google_container_node_pool" "primary_nodes" {
   location   = var.region
   node_count = var.node_count
 
+  node_locations = ["${var.region}-b"] # single zone to save cost
+  # node_locations = ["us-central1-a", "us-central1-b", "us-central1-c"] # multi zone for HA
+
   node_config {
     machine_type = var.machine_type
     disk_size_gb = var.disk_size

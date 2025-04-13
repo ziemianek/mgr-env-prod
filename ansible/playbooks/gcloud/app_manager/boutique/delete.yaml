@@ -1,5 +1,5 @@
 ---
-- name: "Delete {{ app_name | title }} application"
+- name: "Delete Boutique application"
   hosts: gcloud_boutique
   gather_facts: false
   tasks:
