@@ -1,0 +1,54 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: istio-ingress-gateway
+  namespace: boutique
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - "boutique.ziemian.top"
+      tls:
+        mode: SIMPLE
+        credentialName: ingress-cert
+        privateKey: sds
+        serverCertificate: sds
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: istio-ingress-vs
+  namespace: boutique
+spec:
+  hosts:
+    - "boutique.ziemian.top"
+  gateways:
+    - istio-ingress-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/.well-known/acme-challenge/"
+      route:
+        - destination:
+            host: cm-acme-http-solver-67pwv.istio-system.svc.cluster.local
+            port:
+              number: 8089
+    - match:
+        - uri:
+            prefix: "/"
+      route:
+        - destination:
+            host: frontend
+            port:
+              number: 80

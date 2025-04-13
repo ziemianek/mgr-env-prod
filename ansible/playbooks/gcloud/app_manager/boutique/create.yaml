@@ -1,5 +1,5 @@
 ---
-- name: "Create {{ app_name | title }} application"
+- name: "Create Boutique application"
   hosts: gcloud_boutique
   gather_facts: false
   tasks:

@@ -4,6 +4,7 @@ resource "kubernetes_namespace" "app" {
 
     labels = {
       istio-injection = "enabled"
+      monitoring      = "prometheus"
     }
   }
 }

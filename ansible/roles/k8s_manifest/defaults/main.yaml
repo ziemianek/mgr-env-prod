@@ -1,2 +1,1 @@
 k8s_directory: "{{ ansible_parent_role_paths[0] }}/files/manifests"
-k8s_kubeconfig_path: "/tmp/{{ cluster_name }}-kubeconfig"
