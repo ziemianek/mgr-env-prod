@@ -45,16 +45,19 @@ resource "helm_release" "istiod" {
 
   set {
     name  = "meshConfig.ingressService"
-    value = "istio-gateway"
+    value = "istio-ingress-gateway"
   }
 }
 
-resource "helm_release" "istio_ingressgateway" {
-  name       = "istio-ingressgateway"
+resource "helm_release" "istio_ingress_gateway" {
+  name       = "istio-ingress-gateway"
   repository = "https://istio-release.storage.googleapis.com/charts"
   chart      = "gateway"
   version    = "1.25.0"
-  namespace  = helm_release.istio_base.namespace
+
+  namespace        = "istio-ingress"
+  create_namespace = true
+
   depends_on = [helm_release.istiod]
 }
 # =====

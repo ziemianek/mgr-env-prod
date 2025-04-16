@@ -2,22 +2,8 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt-staging
-spec:
-  acme:
-    email: mziemianek3@gmail.com
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
-      name: letsencrypt-staging-account-key
-    solvers:
-      - http01:
-          ingress: {}
-            # class: istio
----
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: letsencrypt-prod
+  name: letsencrypt-prod-ci
+  namespace: istio-ingress
 spec:
   acme:
     email: mziemianek3@gmail.com
@@ -31,14 +17,37 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: ingress-cert
-  namespace: istio-system
+  name: istio-ingress-cert
+  namespace: istio-ingress
 spec:
-  secretName: ingress-cert
-  issuerRef:
-    name: letsencrypt-prod
-    kind: ClusterIssuer
+  secretName: istio-ingress-cert
   commonName: boutique.ziemian.top
   dnsNames:
-    - boutique.ziemian.top
+  - boutique.ziemian.top
+  issuerRef:
+    name: letsencrypt-prod-ci
+    kind: ClusterIssuer
+  solvers:
+  - http01:
+      ingress:
+        class: istio
 ---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: cert-manager-vs
+  namespace: istio-ingress
+spec:
+  hosts:
+    - "boutique.ziemian.top"
+  gateways:
+    - istio-ingress-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/.well-known/acme-challenge/"
+      route:
+        - destination:
+            host: cm-acme-http-solver #-67pwv.istio-ingress.svc.cluster.local
+            port:
+              number: 8089
