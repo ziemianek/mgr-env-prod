@@ -1,23 +1,12 @@
 # ArgoCD
-resource "kubernetes_namespace" "argocd" {
-  metadata {
-    name = "argocd"
-  }
-}
-
 resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm/"
   chart      = "argo-cd"
   version    = "7.8.23"
-  namespace  = kubernetes_namespace.argocd.metadata[0].name
-}
 
-
-resource "kubernetes_namespace" "istio_system" {
-  metadata {
-    name = "istio-system"
-  }
+  namespace        = "argocd"
+  create_namespace = true
 }
 
 # Istio
@@ -26,7 +15,14 @@ resource "helm_release" "istio_base" {
   repository = "https://istio-release.storage.googleapis.com/charts"
   chart      = "base"
   version    = "1.25.0"
-  namespace  = kubernetes_namespace.istio_system.metadata[0].name
+
+  namespace        = "istio-system"
+  create_namespace = true
+
+  set {
+    name  = "global.istioNamespace"
+    value = "istio-system"
+  }
 }
 
 resource "helm_release" "istiod" {
@@ -34,39 +30,45 @@ resource "helm_release" "istiod" {
   repository = "https://istio-release.storage.googleapis.com/charts"
   chart      = "istiod"
   version    = "1.25.0"
-  namespace  = kubernetes_namespace.istio_system.metadata[0].name
-
+  namespace  = helm_release.istio_base.namespace
   depends_on = [helm_release.istio_base]
-}
 
-resource "helm_release" "istio_ingressgateway" {
-  name       = "istio-ingressgateway"
-  repository = "https://istio-release.storage.googleapis.com/charts"
-  chart      = "gateway"
-  version    = "1.25.0"
-  namespace  = kubernetes_namespace.istio_system.metadata[0].name
+  set {
+    name  = "global.istioNamespace"
+    value = "istio-system"
+  }
 
-  depends_on = [helm_release.istiod]
+  set {
+    name  = "telemetry.enabled"
+    value = "true"
+  }
 
-  #   values = [
-  #     <<EOF
-  # service:
-  #   type: LoadBalancer
-  # EOF
-  #   ]
-}
-
-# Cert-manager
-resource "kubernetes_namespace" "cert_manager" {
-  metadata {
-    name = "cert-manager"
+  set {
+    name  = "meshConfig.ingressService"
+    value = "istio-ingress-gateway"
   }
 }
 
+resource "helm_release" "istio_ingress_gateway" {
+  name       = "istio-ingress-gateway"
+  repository = "https://istio-release.storage.googleapis.com/charts"
+  chart      = "gateway"
+  version    = "1.25.0"
+
+  namespace        = "istio-ingress"
+  create_namespace = true
+
+  depends_on = [helm_release.istiod]
+}
+# =====
+
+# Cert-manager
 resource "helm_release" "cert_manager" {
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
   version    = "v1.17.1"
-  namespace  = kubernetes_namespace.cert_manager.metadata[0].name
+
+  namespace        = "cert-manager"
+  create_namespace = true
 }
