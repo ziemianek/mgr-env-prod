@@ -1,0 +1,3 @@
+---
+- name: "{{ service_name }} | Google Cloud GKE Cluster Addons"
+  ansible.builtin.include_tasks: "{{ mode }}.yaml"

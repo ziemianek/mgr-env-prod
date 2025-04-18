@@ -1,2 +1,4 @@
+infra_version: v2
+
 repo_url: https://github.com/ziemianek/mgr-env-prod
 k8s_kubeconfig_path: "/tmp/{{ cluster_name }}-kubeconfig"

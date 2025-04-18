@@ -1,9 +1,9 @@
 ---
-- name: Delete Application
-  ansible.builtin.import_playbook: app_manager/boutique/delete.yaml
+# - name: Delete Application
+#   ansible.builtin.import_playbook: app_manager/boutique/delete.yaml
 
-- name: Delete GKE Cluster Addons
-  ansible.builtin.import_playbook: gke_cluster_addons/boutique/delete.yaml
+# - name: delete GKE Cluster Addons
+  # ansible.builtin.import_playbook: "{{ infra_version }}/gke_cluster_addons/boutique/delete.yaml"
 
-- name: Delete GKE Cluster
-  ansible.builtin.import_playbook: gke_cluster/boutique/delete.yaml
+- name: delete GKE Cluster
+  ansible.builtin.import_playbook: "{{ infra_version }}/gke_cluster/boutique/delete.yaml"
