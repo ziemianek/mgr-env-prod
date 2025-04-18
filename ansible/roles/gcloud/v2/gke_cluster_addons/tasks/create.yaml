@@ -1,0 +1,55 @@
+---
+# todo: refactor this - download file and use k8s_manifests role
+# to get rid of the error:
+# cert-manager CRDs are not yet installed on the Kubernetes API server"
+# this must be installed before installing cert-manager helm chart
+# https://stackoverflow.com/questions/78091886/issue-with-cert-manager-installation
+
+# Wrapped in a block to pass env variables
+# https://github.com/ansible/ansible/issues/53626
+- name: "{{ service_name }} | Provision cert-manager"
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_path }}"
+  block:
+    - name: "{{ service_name }} | Get kubeconfig"
+      ansible.builtin.command: >
+        gcloud container clusters get-credentials {{ cluster_name }}
+        --project {{ gcloud_project_id }}
+        --region {{ gcloud_region }}
+      changed_when: true
+
+    - name: "{{ service_name }} | Kubectl apply cert-manager CRDs"
+      ansible.builtin.command: kubectl apply -f "{{ role_path }}/files/crds/cert-manager-v1.17.1.crds.yaml"    
+      changed_when: true
+
+    # helm related stuff goes to separate role
+    - name: set chart name
+      ansible.builtin.set_fact:
+        helm_release_name: cert-manager
+
+    - name: set chart namespace
+      ansible.builtin.set_fact:
+        helm_release_namespace: cert-manager
+
+    - name: set chart path
+      ansible.builtin.set_fact:
+        helm_chart_path: "{{ role_path }}/files/charts/cert-manager-v1.17.1"
+
+    # fuck this use terraform xd
+    - name: Deploy cert manager chart from local path
+      kubernetes.core.helm:
+        name: "{{ helm_release_name }}"
+        chart_ref: "{{ helm_chart_path }}"
+        release_namespace: "{{ helm_release_namespace }}"
+        create_namespace: true
+      register: helm_result
+
+    - name: Print helm result
+      ansible.builtin.debug:
+        msg: "{{ helm_result }}"
+
+  always:
+    - name: "{{ service_name }} | Clean kubeconfig"
+      ansible.builtin.file:
+        path: "{{ k8s_kubeconfig_path }}"
+        state: absent
