@@ -1,9 +1,6 @@
 ---
 - name: Create GKE Cluster
-  ansible.builtin.import_playbook: gke_cluster/boutique/create.yaml
+  ansible.builtin.import_playbook: "{{ infra_version }}/gke_cluster/boutique/create.yaml"
 
 - name: Create GKE Cluster Addons
-  ansible.builtin.import_playbook: gke_cluster_addons/boutique/create.yaml
-
-- name: Create Application
-  ansible.builtin.import_playbook: app_manager/boutique/create.yaml
+  ansible.builtin.import_playbook: "{{ infra_version }}/gke_cluster_addons/boutique/create.yaml"

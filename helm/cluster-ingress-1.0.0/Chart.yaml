@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cluster-ingress-chart
+description: A Helm chart for Istio ingress gateway configuration
+type: application
+version: 1.0.0
+appVersion: "1.0"
