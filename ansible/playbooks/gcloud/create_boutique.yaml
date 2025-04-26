@@ -4,3 +4,6 @@
 
 - name: Create GKE Cluster Addons
   ansible.builtin.import_playbook: "{{ infra_version }}/gke_cluster_addons/boutique/create.yaml"
+
+- name: Create DNS Record in Cloudflare
+  ansible.builtin.import_playbook: cloudflare_dns_record/boutique/create.yaml
