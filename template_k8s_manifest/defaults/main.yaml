@@ -1,1 +1,0 @@
-k8s_directory: "{{ ansible_parent_role_paths[0] }}/files/manifests"
