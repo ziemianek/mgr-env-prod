@@ -5,6 +5,6 @@
   tasks:
     - name: Include role for record creation
       ansible.builtin.include_role:
-        name: "gcloud/{{ infra_version }}/cloudflare_dns_record"
+        name: "gcloud/cloudflare_dns_record"
       vars:
         mode: create
