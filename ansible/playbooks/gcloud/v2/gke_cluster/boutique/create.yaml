@@ -1,10 +1,10 @@
 ---
-- name: Create DNS Record in Cloudflare
+- name: Create GKE Cluster
   hosts: gcloud_boutique
   gather_facts: false
   tasks:
-    - name: Include role for record creation
+    - name: Include role for cluster creation
       ansible.builtin.include_role:
-        name: "gcloud/{{ infra_version }}/cloudflare_dns_record"
+        name: "gcloud/{{ infra_version }}/gke_cluster"
       vars:
         mode: create
