@@ -1,6 +1,7 @@
 exclude_paths:
   - .github/workflows/
   - apps/ # this is not my code so I DONT CARE!!!
+  - helm/ # this is (mostly) not my code so I DONT CARE!!!
 
 skip_list:
   - role-name[path]
