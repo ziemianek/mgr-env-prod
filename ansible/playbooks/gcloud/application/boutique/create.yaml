@@ -1,10 +1,10 @@
 ---
-- name: Create GKE Cluster
+- name: Create boutique application
   hosts: gcloud_boutique
   gather_facts: false
   tasks:
-    - name: Include role for cluster creation
+    - name: Include role for app creation
       ansible.builtin.include_role:
-        name: "gcloud/{{ infra_version }}/gke_cluster"
+        name: "gcloud/application"
       vars:
         mode: create
