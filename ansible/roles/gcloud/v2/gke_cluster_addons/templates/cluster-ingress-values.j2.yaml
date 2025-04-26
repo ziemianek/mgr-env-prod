@@ -53,5 +53,5 @@ virtualService:
   gatewayRef: "istio-ingress-gateway"
   routes:
     - destination:
-        host: "frontend.boutique.svc.cluster.local"
+        host: "frontend.{{ app_name }}.svc.cluster.local"
         port: 80

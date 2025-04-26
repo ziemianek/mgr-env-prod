@@ -22,7 +22,7 @@
     operation: apply
 
 - name: "{{ service_name }} | Cleanup"
-  when: save_template | default(false) | bool != true
+  when: save_template | default(false)
   ansible.builtin.file:
-    src: "{{ cluster_istio_ingress_rendered_template_path }}"
+    path: "{{ cluster_istio_ingress_rendered_template_path }}"
     state: absent
