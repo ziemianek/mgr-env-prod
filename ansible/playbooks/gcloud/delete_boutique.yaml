@@ -2,8 +2,11 @@
 # - name: Delete Application
 #   ansible.builtin.import_playbook: app_manager/boutique/delete.yaml
 
-- name: delete GKE Cluster Addons
+- name: Delete DNS Record in Cloudflare
+  ansible.builtin.import_playbook: cloudflare_dns_record/boutique/delete.yaml
+
+- name: Delete GKE Cluster Addons
   ansible.builtin.import_playbook: "{{ infra_version }}/gke_cluster_addons/boutique/delete.yaml"
 
-- name: delete GKE Cluster
+- name: Delete GKE Cluster
   ansible.builtin.import_playbook: "{{ infra_version }}/gke_cluster/boutique/delete.yaml"
