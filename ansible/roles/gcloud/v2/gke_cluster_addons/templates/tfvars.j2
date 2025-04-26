@@ -3,7 +3,10 @@ region       = "{{ gcloud_region }}"
 cluster_name = "{{ cluster_name }}"
 
 # Addons
-cert_manager  = "{{ helm_charts.cert_manager.path }}"
-istiod        = "{{ helm_charts.istiod.path }}"
-istio_base    = "{{ helm_charts.istio_base.path }}"
-istio_gateway = "{{ helm_charts.istio_gateway.path }}"
+cert_manager    = "{{ helm_charts.cert_manager.path }}"
+cluster_ingress = "{{ helm_charts.cluster_ingress.path }}"
+istiod          = "{{ helm_charts.istiod.path }}"
+istio_base      = "{{ helm_charts.istio_base.path }}"
+istio_gateway   = "{{ helm_charts.istio_gateway.path }}"
+
+cluster_ingress_values = "{{ cluster_istio_ingress_rendered_template_path }}"

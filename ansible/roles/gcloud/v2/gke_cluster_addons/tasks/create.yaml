@@ -1,4 +1,14 @@
 ---
+- name: "{{ service_name }} | Render template to {{ rendered_template_path }}"
+  ansible.builtin.template:
+    src: "{{ cluster_istio_ingress_template_path }}"
+    dest: "{{ cluster_istio_ingress_rendered_template_path }}"
+    mode: "0644"
+
+- name: "{{ service_name }} | Show templating results"
+  ansible.builtin.debug:
+    msg: "{{ lookup('ansible.builtin.template', '{{ cluster_istio_ingress_rendered_template_path }}') }}"
+
 - name: "{{ service_name }} | Run Terraform Init"
   ansible.builtin.include_role:
     name: terraform
@@ -11,8 +21,8 @@
   vars:
     operation: apply
 
-- name: "{{ service_name }} | Deploy Kubernetes manifests"
-  ansible.builtin.include_role:
-    name: k8s_manifest
-  vars:
-    operation: create
+- name: "{{ service_name }} | Cleanup"
+  when: save_template | default(false) | bool != true
+  ansible.builtin.file:
+    src: "{{ cluster_istio_ingress_rendered_template_path }}"
+    state: absent

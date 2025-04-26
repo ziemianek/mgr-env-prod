@@ -1,7 +1,6 @@
 service_name: gke_cluster_addons
 
-# For terraform role to correctly find the charts
-helm_charts_dir: "{{ ansible_parent_role_paths[0] }}/files/charts"
+helm_charts_dir: "{{ role_path }}/../../../helm"
 
 helm_charts:
   cert_manager:
@@ -12,12 +11,10 @@ helm_charts:
     path: "{{ helm_charts_dir }}/istiod-1.25.2"
   istio_gateway:
     path: "{{ helm_charts_dir }}/istio-gateway-1.25.2"
+  cluster_ingress:
+    path: "{{ helm_charts_dir }}/cluster-ingress-1.0.0"
 
-k8s_manifests:
-  - cert-manager.yaml
-  - istio-ingress-gateway.yaml
-  # - chaos_mesh.yaml
-  # - grafana.yaml
-  # - prometheus.yaml
-  # - kiali.yaml
-  # - jaeger.yaml
+cluster_istio_ingress_template_path: "{{ role_path }}/templates/cluster-ingress-values.j2.yaml"
+cluster_istio_ingress_rendered_template_path: /tmp/cluster-ingress-values.yaml
+
+save_template: true # Uncomment to save the rendered template

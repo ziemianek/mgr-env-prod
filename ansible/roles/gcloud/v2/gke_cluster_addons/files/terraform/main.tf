@@ -49,3 +49,14 @@ resource "helm_release" "cert_manager" {
 
   create_namespace = true
 }
+
+resource "helm_release" "cluster_ingress" {
+  name      = "cluster-ingress"
+  chart     = var.cluster_ingress
+  namespace = "istio-ingress"
+  depends_on = [
+    helm_release.istio_ingress_gateway,
+    helm_release.cert_manager
+  ]
+  values = ["${file(var.cluster_ingress_values)}"]
+}
