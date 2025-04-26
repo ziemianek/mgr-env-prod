@@ -1,0 +1,59 @@
+# Default values for istio-ingress-gateway-chart
+# This is a YAML-formatted file.
+
+# Domain configuration
+domain:
+  name: "example.com"  # Replace with your actual domain
+
+# Certificate Manager configuration
+certManager:
+  email: "user@example.com"
+  server: "https://acme-v02.api.letsencrypt.org/directory"
+  privateKeySecretRef:
+    name: "letsencrypt-prod-account-key"
+  apiTokenSecretRef:
+    name: "cloudflare-api-token-secret"
+    key: "api-token"
+
+# Certificate configuration
+certificate:
+  name: "istio-ingress-cert"
+  namespace: "istio-ingress"
+  secretName: "istio-ingress-cert"
+  apiToken: "cloudflare-api-token" # Replace with your actual API token key
+
+# ClusterIssuer configuration
+clusterIssuer:
+  name: "letsencrypt-prod-ci"
+  namespace: "istio-ingress"
+
+# Gateway configuration
+gateway:
+  name: "istio-ingress-gateway"
+  namespace: "istio-ingress"
+  selector:
+    istio: "ingress-gateway"
+  http:
+    port: 80
+    name: "http"
+  https:
+    port: 443
+    name: "https"
+    credentialName: "istio-ingress-cert"
+
+# Secret configuration
+secret:
+  name: "cloudflare-api-token-secret"
+  namespace: "cert-manager"
+  type: "Opaque"
+  apiToken: "abc-123"  # Replace with your actual token
+
+# Virtual Service configuration
+virtualService:
+  name: "istio-ingress-vs"
+  namespace: "istio-ingress"
+  gatewayRef: "istio-ingress-gateway"
+  routes:
+    - destination:
+        host: "service.namespace.svc.cluster.local"
+        port: 80

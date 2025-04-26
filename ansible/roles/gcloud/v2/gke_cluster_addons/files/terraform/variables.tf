@@ -40,3 +40,16 @@ variable "istio_gateway" {
   type        = string
   nullable    = false
 }
+
+# Ingress
+variable "cluster_ingress" {
+  description = "Path to the cluster-ingress Helm chart"
+  type        = string
+  nullable    = false
+}
+
+variable "cluster_ingress_values" {
+  description = "Path to values for the cluster-ingress Helm chart"
+  type        = string
+  nullable    = false
+}
