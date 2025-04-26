@@ -6,14 +6,14 @@ metadata:
   namespace: istio-ingress
 spec:
   selector:
-    istio: ingressgateway
+    istio: ingress-gateway
   servers:
     - port:
         number: 80
         name: http
         protocol: HTTP
       hosts:
-        - "*" # should it be like this?
+        - "boutique.ziemian.top"
     - port:
         number: 443
         name: https
@@ -22,9 +22,7 @@ spec:
         - "boutique.ziemian.top"
       tls:
         mode: SIMPLE
-        credentialName: ingress-cert
-        privateKey: sds
-        serverCertificate: sds
+        credentialName: istio-ingress-cert
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
