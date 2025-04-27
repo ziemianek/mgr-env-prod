@@ -1,10 +1,10 @@
 ---
-- name: Delete GKE Cluster
+- name: Delete boutique application
   hosts: gcloud_boutique
   gather_facts: false
   tasks:
-    - name: Include role for cluster deletion
+    - name: Include role for app deletion
       ansible.builtin.include_role:
-        name: "gcloud/{{ infra_version }}/gke_cluster"
+        name: "gcloud/application"
       vars:
         mode: delete

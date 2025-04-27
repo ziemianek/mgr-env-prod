@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: {{ .Values.virtualService.name }}
+  namespace: {{ .Values.virtualService.namespace }}
+spec:
+  hosts:
+    - {{ .Values.virtualService.hosts.applicationDomain }}
+  gateways:
+    - {{ .Values.virtualService.gatewayRef }}
+  http:
+    - name: "frontend-route"
+      match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: {{ .Values.virtualService.routes.frontend.host }}
+            port:
+              number: {{ .Values.virtualService.routes.frontend.port }}
