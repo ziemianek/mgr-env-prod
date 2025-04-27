@@ -10,9 +10,3 @@
     name: terraform
   vars:
     operation: apply
-
-- name: "{{ service_name }} | Cleanup"
-  when: save_template | default(false) == false
-  ansible.builtin.file:
-    path: "{{ cluster_istio_ingress_rendered_template_path }}"
-    state: absent

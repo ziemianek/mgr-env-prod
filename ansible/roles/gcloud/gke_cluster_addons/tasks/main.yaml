@@ -13,7 +13,7 @@
   ansible.builtin.include_tasks: "{{ mode }}.yaml"
 
 - name: "{{ service_name }} | Cleanup"
-  when: save_template | default(false) == false
+  when: save_template | default(false)
   ansible.builtin.file:
     path: "{{ cluster_istio_ingress_rendered_template_path }}"
     state: absent
