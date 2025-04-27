@@ -51,7 +51,9 @@ virtualService:
   name: "istio-ingress-vs"
   namespace: "istio-ingress"
   gatewayRef: "istio-ingress-gateway"
+  hosts:
+    applicationDomain: "{{ dns_domain_name }}"
   routes:
-    - destination:
-        host: "frontend.{{ app_name }}.svc.cluster.local"
-        port: 80
+    frontend:
+      host: "frontend.{{ app_name }}.svc.cluster.local"
+      port: 80
