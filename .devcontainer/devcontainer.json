@@ -1,0 +1,7 @@
+{
+    "name": "My Dev Env",
+    "build": { "dockerfile": "Dockerfile" },
+    "features": {},
+    "postCreateCommand": "pip install -r requirements.txt"
+    // "mounts": ["source=${localWorkspaceFolder}/.env,target=/workspace/.env,type=bind"]
+ }
