@@ -1,3 +1,0 @@
-app_name: boutique
-
-dns_domain_name: "butik.{{ dns_root_domain_name }}"

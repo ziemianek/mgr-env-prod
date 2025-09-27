@@ -1,8 +1,0 @@
----
-- name: "{{ service_name }} | Delete DNS Record"
-  community.general.cloudflare_dns:
-    zone: "{{ dns_root_domain_name }}"
-    record: "{{ dns_domain_name }}"
-    type: A
-    api_token: "{{ vault_cloudflare_token }}"
-    state: absent

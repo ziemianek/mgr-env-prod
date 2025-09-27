@@ -1,6 +1,0 @@
----
-- name: "{{ service_name }} | Run Terraform Destroy"
-  ansible.builtin.include_role:
-    name: terraform
-  vars:
-    operation: destroy
