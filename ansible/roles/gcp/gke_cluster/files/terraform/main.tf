@@ -20,9 +20,28 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
+# Subnet for nodes + secondary ranges for Pods/Services
+resource "google_compute_subnetwork" "subnet" {
+  name          = var.gke_subnet_name
+  ip_cidr_range = var.gke_subnet_cidr
+  region        = var.region
+  network       = data.google_compute_network.vpc_network.id  # use resource ref
+
+  secondary_ip_range {
+    range_name    = "pods"
+    ip_cidr_range = "10.20.0.0/16"
+  }
+
+  secondary_ip_range {
+    range_name    = "services"
+    ip_cidr_range = "10.30.0.0/20"
+  }
+}
+
+# Allow internal communication between nodes
 resource "google_compute_firewall" "allow_internal_traffic" {
   name    = "allow-internal-traffic"
-  network = google_compute_network.vpc_network.name
+  network = data.google_compute_network.vpc_network.name
 
   allow {
     protocol = "tcp"
@@ -32,9 +51,10 @@ resource "google_compute_firewall" "allow_internal_traffic" {
   source_ranges = [var.gke_subnet_cidr]
 }
 
+# Allow HTTPS ingress (for frontend / LB)
 resource "google_compute_firewall" "allow_external_ingress" {
   name    = "allow-external-ingress"
-  network = google_compute_network.vpc_network.name
+  network = data.google_compute_network.vpc_network.name
 
   allow {
     protocol = "tcp"
@@ -44,20 +64,20 @@ resource "google_compute_firewall" "allow_external_ingress" {
   source_ranges = ["0.0.0.0/0"]
 }
 
+# GKE cluster (VPC-native, private nodes)
 resource "google_container_cluster" "primary" {
   name                     = var.cluster_name
   location                 = var.region
   remove_default_node_pool = true
   initial_node_count       = 1
   deletion_protection      = false
-  networking_mode          = "VPC_NATIVE"
-  network                  = var.vpc_name
-  subnetwork               = var.subnet_name
-  # node_locations           = ["${var.region}-a"] # single zone to save cost
-  node_locations = [
-    "${var.region}-a",
-    "${var.region}-b"
-  ] # multi zone for HA
+
+  networking_mode = "VPC_NATIVE"
+  network         = data.google_compute_network.vpc_network.name
+  subnetwork      = google_compute_subnetwork.subnet.name
+
+  # Keep single-zone for cost/reproducibility
+  node_locations = ["${var.region}-a"]
 
   addons_config {
     http_load_balancing {
@@ -69,33 +89,30 @@ resource "google_container_cluster" "primary" {
   }
 
   ip_allocation_policy {
-    cluster_secondary_range_name  = "${var.region}-gke-pods"
-    services_secondary_range_name = "${var.region}-gke-services"
+    cluster_secondary_range_name  = "pods"      # must match subnet
+    services_secondary_range_name = "services"  # must match subnet
   }
 
   private_cluster_config {
     enable_private_nodes    = true
     enable_private_endpoint = false
-    master_ipv4_cidr_block  = "192.168.0.0/28" # CIDR block for control plane
+    master_ipv4_cidr_block  = "192.168.0.0/28"
   }
 }
 
+# Node pool
 resource "google_container_node_pool" "primary_nodes" {
   name     = "${var.cluster_name}-node-pool"
   cluster  = google_container_cluster.primary.name
   location = var.region
 
-  node_locations = [
-    "${var.region}-a",
-    "${var.region}-b",
-    # "${var.region}-c"
-  ]
+  node_locations = ["${var.region}-a"]
 
-  initial_node_count = 1
+  initial_node_count = 3  # 3 nodes baseline
 
   autoscaling {
-    total_max_node_count = 4
-    total_min_node_count = 1
+    total_min_node_count = 3  # fix at 3 for fairness
+    total_max_node_count = 3
   }
 
   management {
@@ -104,9 +121,10 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 
   node_config {
-    preemptible  = false
-    machine_type = var.machine_type
-    disk_size_gb = var.disk_size
+    preemptible  = false            # on-demand for fairness baseline
+    machine_type = var.machine_type # e.g., e2-standard-2
+    disk_size_gb = 50
+    disk_type    = "pd-balanced"
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
