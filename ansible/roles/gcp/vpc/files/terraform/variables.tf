@@ -37,9 +37,3 @@ variable "vpc_name" {
   type        = string
   nullable    = false
 }
-
-variable "gke_subnet_cidr" {
-  description = "The CIDR range for the GKE network."
-  type        = string
-  nullable    = false
-}
