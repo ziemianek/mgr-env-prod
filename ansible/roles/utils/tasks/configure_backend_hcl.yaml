@@ -45,7 +45,7 @@
   ansible.builtin.lineinfile:
     path: "{{ item.path }}"
     regexp: '^bucket\s*='
-    line: 'bucket  = "{{ tfstate_bucket_name }}"'
+    line: 'bucket = "{{ tfstate_bucket_name }}"'
     backrefs: true
   loop: "{{ backend_files.files }}"
   loop_control:
