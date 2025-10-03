@@ -1,3 +1,0 @@
----
-- name: "{{ service_name }} | DNS Record"
-  ansible.builtin.include_tasks: "{{ mode }}.yaml"
