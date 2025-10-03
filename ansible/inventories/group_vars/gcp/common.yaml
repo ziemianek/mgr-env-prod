@@ -1,0 +1,40 @@
+########################################################################################
+# Project: 
+#   Managed Kubernetes Services: A Comparison of AKS, EKS and GKE
+#
+# Author:  
+#   Michał Ziemianek
+#
+# Description:
+#   The project focuses on deploying and benchmarking
+#   a microservices-based application using Kubernetes and cloud-native technologies
+#   (Terraform, Ansible, Helm, Prometheus, Grafana, K6).
+#
+# License:
+#   Apache 2.0
+#
+# Notes:
+#   - This code is intended for educational and research purposes.
+#   - Ensure proper configuration of cloud resources before execution.
+#
+# © 2025 Michał Ziemianek. All rights reserved.
+########################################################################################
+---
+
+cloud_name: gcp
+
+# GCP
+gcp_region: europe-central2 # Warsaw
+gcp_project_id: "{{ vault_gcp_project_id }}"
+
+# Terraform
+tf_backend_type: gcs
+tf_environment:
+  GOOGLE_CREDENTIALS: "{{ vault_gcp_credentials }}"
+
+# GKE
+gke_node_count: 3
+gke_node_machine_type: e2-standard-2
+gke_node_disk_size: 20
+gke_subnet_cidr: 10.10.0.0/20
+gke_subnet_name: "{{ app_name }}-gke-subnet"

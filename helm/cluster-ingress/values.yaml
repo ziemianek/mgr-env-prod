@@ -1,0 +1,27 @@
+clusterIssuer:
+  name: selfsigned-cluster-issuer
+
+certificate:
+  name: istio-ingress-cert
+  namespace: istio-ingress
+  secretName: istio-ingress-cert
+  dnsNames:
+    - "*"
+
+gateway:
+  name: istio-ingress-gateway
+  namespace: istio-ingress
+  selector:
+    istio: ingress-gateway
+  hosts:
+    - "*"
+
+virtualService:
+  name: frontend-vs
+  namespace: istio-ingress
+  gatewayRef: istio-ingress-gateway
+  hosts:
+    - "*"
+  destination:
+    host: frontend.default.svc.cluster.local
+    port: 80
