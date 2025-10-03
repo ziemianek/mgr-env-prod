@@ -1,0 +1,41 @@
+########################################################################################
+# Project: 
+#   Managed Kubernetes Services: A Comparison of AKS, EKS and GKE
+#
+# Author:  
+#   Michał Ziemianek
+#
+# Description:
+#   The project focuses on deploying and benchmarking
+#   a microservices-based application using Kubernetes and cloud-native technologies
+#   (Terraform, Ansible, Helm, Prometheus, Grafana, K6).
+#
+# License:
+#   Apache 2.0
+#
+# Notes:
+#   - This code is intended for educational and research purposes.
+#   - Ensure proper configuration of cloud resources before execution.
+#
+# © 2025 Michał Ziemianek. All rights reserved.
+########################################################################################
+---
+
+- name: "{{ service_name }} | Render template to {{ rendered_template_path }}"
+  ansible.builtin.template:
+    src: "{{ cluster_istio_ingress_template_path }}"
+    dest: "{{ cluster_istio_ingress_rendered_template_path }}"
+    mode: "0644"
+
+- name: "{{ service_name }} | Show templating results"
+  ansible.builtin.debug:
+    msg: "{{ lookup('ansible.builtin.template', '{{ cluster_istio_ingress_rendered_template_path }}') }}"
+
+- name: "{{ service_name }} | Google Cloud GKE Cluster Addons"
+  ansible.builtin.include_tasks: "{{ mode }}.yaml"
+
+- name: "{{ service_name }} | Cleanup"
+  when: save_template | default(false)
+  ansible.builtin.file:
+    path: "{{ cluster_istio_ingress_rendered_template_path }}"
+    state: absent

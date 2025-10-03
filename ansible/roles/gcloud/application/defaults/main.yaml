@@ -1,7 +1,0 @@
-service_name: application
-
-helm_charts_dir: "{{ role_path }}/../../../helm"
-
-helm_charts:
-  application:
-    path: "{{ helm_charts_dir }}/boutique-0.10.2"

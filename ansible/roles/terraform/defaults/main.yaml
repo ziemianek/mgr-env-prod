@@ -1,7 +1,28 @@
+########################################################################################
+# Project: 
+#   Managed Kubernetes Services: A Comparison of AKS, EKS and GKE
+#
+# Author:  
+#   Michał Ziemianek
+#
+# Description:
+#   The project focuses on deploying and benchmarking
+#   a microservices-based application using Kubernetes and cloud-native technologies
+#   (Terraform, Ansible, Helm, Prometheus, Grafana, K6).
+#
+# License:
+#   Apache 2.0
+#
+# Notes:
+#   - This code is intended for educational and research purposes.
+#   - Ensure proper configuration of cloud resources before execution.
+#
+# © 2025 Michał Ziemianek. All rights reserved.
+########################################################################################
 ---
+
 # Terraform variables
 tf_directory: "{{ ansible_parent_role_paths[0] }}/files/terraform"
-tf_backend_config_file: "{{ app_name }}.{{ tf_backend_type }}.tfbackend"
 tf_workspace: "{{ cloud_name }}_{{ app_name }}_{{ service_name }}"
 tf_vars_template_file_path: "{{ ansible_parent_role_paths[0] }}/templates/tfvars.j2"
 tf_destination_directory: "/tmp/{{ cloud_name }}_{{ app_name }}"
