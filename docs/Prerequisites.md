@@ -22,7 +22,6 @@ This will install Ansible 12.0.0 [core 2.19.2]
 
 ---
 
-(czy to potrzebne?)
-install kubectl 1.34.1 https://kubernetes.io/docs/tasks/tools/
+Install kubectl 1.34.1 https://kubernetes.io/docs/tasks/tools/
 
-helm - czy potrzebna instalacja?
+(optional) Install helm v.3.19.0 https://helm.sh/docs/intro/install/

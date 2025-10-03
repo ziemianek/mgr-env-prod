@@ -22,10 +22,10 @@
 
 # Subnet for nodes + secondary ranges for Pods/Services
 resource "google_compute_subnetwork" "subnet" {
-  name          = var.gke_subnet_name
-  ip_cidr_range = var.gke_subnet_cidr
+  name          = var.subnet_name
+  ip_cidr_range = var.subnet_cidr
   region        = var.region
-  network       = data.google_compute_network.vpc_network.id  # use resource ref
+  network       = data.google_compute_network.vpc_network.id
 
   secondary_ip_range {
     range_name    = "pods"
@@ -48,7 +48,7 @@ resource "google_compute_firewall" "allow_internal_traffic" {
     ports    = ["0-65535"]
   }
 
-  source_ranges = [var.gke_subnet_cidr]
+  source_ranges = [var.subnet_cidr]
 }
 
 # Allow HTTPS ingress (for frontend / LB)
@@ -62,6 +62,32 @@ resource "google_compute_firewall" "allow_external_ingress" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_router" "nat_router" {
+  name    = "${var.cluster_name}-nat-router"
+  region  = var.region
+  network = data.google_compute_network.vpc_network.id
+}
+
+resource "google_compute_router_nat" "nat_config" {
+  name   = "${var.cluster_name}-nat"
+  router = google_compute_router.nat_router.name
+  region = google_compute_router.nat_router.region
+
+  nat_ip_allocate_option = "AUTO_ONLY"
+
+  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
+
+  subnetwork {
+    name                    = google_compute_subnetwork.subnet.name
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
+  }
 }
 
 # GKE cluster (VPC-native, private nodes)
@@ -89,8 +115,8 @@ resource "google_container_cluster" "primary" {
   }
 
   ip_allocation_policy {
-    cluster_secondary_range_name  = "pods"      # must match subnet
-    services_secondary_range_name = "services"  # must match subnet
+    cluster_secondary_range_name  = "pods"     # must match subnet
+    services_secondary_range_name = "services" # must match subnet
   }
 
   private_cluster_config {
@@ -108,10 +134,10 @@ resource "google_container_node_pool" "primary_nodes" {
 
   node_locations = ["${var.region}-a"]
 
-  initial_node_count = 3  # 3 nodes baseline
+  initial_node_count = 3 # 3 nodes baseline
 
   autoscaling {
-    total_min_node_count = 3  # fix at 3 for fairness
+    total_min_node_count = 3 # fix at 3 for fairness
     total_max_node_count = 3
   }
 
@@ -121,8 +147,8 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 
   node_config {
-    preemptible  = false            # on-demand for fairness baseline
-    machine_type = var.machine_type # e.g., e2-standard-2
+    preemptible  = false # on-demand for fairness baseline
+    machine_type = var.machine_type
     disk_size_gb = 50
     disk_type    = "pd-balanced"
     oauth_scopes = [

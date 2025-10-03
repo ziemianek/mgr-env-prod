@@ -19,44 +19,8 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
+---
 
-# todo: move this to helm chart?
-# ===
-# Certificate configuration (self-signed)
-certificate:
-  name: "istio-ingress-cert"
-  namespace: "istio-ingress"
-  secretName: "istio-ingress-cert"
-
-# ClusterIssuer configuration - self signed
-clusterIssuer:
-  name: "selfsigned-cluster-issuer"
-  namespace: "istio-ingress"
-  selfSigned: true
-
-# Gateway configuration
-gateway:
-  name: "istio-ingress-gateway"
-  namespace: "istio-ingress"
-  selector:
-    istio: "ingress-gateway"
-  http:
-    port: 80
-    name: "http"
-  https:
-    port: 443
-    name: "https"
-    credentialName: "istio-ingress-cert"
-# ===
-
-# Virtual Service configuration
 virtualService:
-  name: "istio-ingress-vs"
-  namespace: "istio-ingress"
-  gatewayRef: "istio-ingress-gateway"
-  hosts:
-    - "*"   # akceptuje każdy host, w tym IP load balancera
-  routes:
-    frontend:
-      host: "frontend.{{ app_name }}.svc.cluster.local"
-      port: 80
+  destination:
+    host: "frontend.{{ app_name }}.svc.cluster.local"

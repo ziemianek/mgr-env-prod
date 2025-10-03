@@ -44,6 +44,12 @@ variable "subnet_name" {
   nullable    = false
 }
 
+variable "subnet_cidr" {
+  description = "Subnet CIDR range"
+  type        = string
+  nullable    = false
+}
+
 variable "cluster_name" {
   description = "GKE cluster name"
   type        = string
@@ -59,11 +65,5 @@ variable "node_count" {
 variable "machine_type" {
   description = "Machine type for the node pool"
   type        = string
-  nullable    = false
-}
-
-variable "disk_size" {
-  description = "Disk size in GB for the node pool"
-  type        = number
   nullable    = false
 }

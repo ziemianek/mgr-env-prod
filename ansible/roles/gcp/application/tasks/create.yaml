@@ -32,3 +32,6 @@
     name: terraform
   vars:
     operation: apply
+
+- name: "{{ service_name  }} | Fetch ingress IP address"
+  ansible.builtin.include_tasks: fetch_ingress_ip_address.yaml
