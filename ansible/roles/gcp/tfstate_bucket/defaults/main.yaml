@@ -20,5 +20,5 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-bucket = "magisterka-tfstate"
-prefix = "boutique/gke_cluster_addons"
+---
+service_name: tfstate_bucket

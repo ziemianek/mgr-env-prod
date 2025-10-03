@@ -20,6 +20,7 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
----
-- name: "{{ service_name }} | DNS Record"
-  ansible.builtin.include_tasks: "{{ mode }}.yaml"
+project_id   = "{{ gcp_project_id }}"
+region       = "{{ gcp_region }}"
+client_email = "{{ vault_gcp_tfsa_client_email }}"
+tfstate_bucket_name = "{{ tfstate_bucket_name }}"

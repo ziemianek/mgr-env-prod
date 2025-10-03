@@ -20,5 +20,18 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-bucket = "magisterka-tfstate"
-prefix = "boutique/vpc"
+resource "google_storage_bucket" "tfstate" {
+  name                        = var.tfstate_bucket_name
+  location                    = "EU"
+  force_destroy               = false
+  uniform_bucket_level_access = true
+  versioning {
+    enabled = true
+  }
+}
+
+resource "google_storage_bucket_iam_member" "tfstate_admin" {
+  bucket = google_storage_bucket.tfstate.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:${var.client_email}"
+}

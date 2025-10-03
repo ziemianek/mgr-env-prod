@@ -21,10 +21,5 @@
 ########################################################################################
 ---
 
-- name: "{{ service_name }} | Delete DNS Record from Cloudflare"
-  community.general.cloudflare_dns:
-    zone: "{{ dns_root_domain_name }}"
-    record: "{{ dns_domain_name }}"
-    type: A
-    api_token: "{{ vault_cloudflare_token }}"
-    state: absent
+- name: "{{ service_name }} | Main"
+  ansible.builtin.include_tasks: "{{ mode }}.yaml"

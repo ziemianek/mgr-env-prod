@@ -19,16 +19,6 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
----
 
-- name: Create GKE Cluster
-  ansible.builtin.import_playbook: gke_cluster/create.yaml
-
-- name: Create GKE Cluster Addons
-  ansible.builtin.import_playbook: gke_cluster_addons/create.yaml
-
-# - name: Create DNS Record in Cloudflare
-#   ansible.builtin.import_playbook: cloudflare_dns_record/create.yaml
-
-- name: Create Boutique application
-  ansible.builtin.import_playbook: application/create.yaml
+bucket  = "terraform-state-uycmnjq4nr"
+prefix = "boutique/gke_cluster"

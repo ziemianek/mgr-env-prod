@@ -1,0 +1,25 @@
+---
+- name: Set bucket name with random suffix
+  ansible.builtin.set_fact:
+    tfstate_bucket_name: "terraform-state-{{ lookup('community.general.random_string', length=10, upper=false, special=false) }}"
+
+- name: Debug final bucket name
+  ansible.builtin.debug:
+    msg: "Using bucket: {{ tfstate_bucket_name }}"
+
+- name: Find all backend.hcl files in repo
+  ansible.builtin.find:
+    paths: "{{ role_path }}/../{{ cloud_name }}/"
+    patterns: "backend.hcl"
+    recurse: yes
+  register: backend_files
+
+- name: Update bucket name in backend.hcl files
+  ansible.builtin.lineinfile:
+    path: "{{ item.path }}"
+    regexp: '^bucket\s*='
+    line: 'bucket  = "{{ tfstate_bucket_name }}"'
+    backrefs: true
+  loop: "{{ backend_files.files }}"
+  loop_control:
+    label: "{{ item.path }}"

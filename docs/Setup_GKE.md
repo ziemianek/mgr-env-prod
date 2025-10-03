@@ -85,3 +85,14 @@ Nastepnie zmien nazwe pliku z `template.vault.yaml` na `vault.yaml` i zaszyfruj 
 ```sh
 ansible-vault encrypt ansible/inventories/group_vars/gcp/vault.yaml
 ```
+
+## 9. Ansible
+### 9.1. tfstate bucket
+```sh
+```
+### 9.2. vpc
+```sh
+```
+### 9.3. gke cluster
+```sh
+```
