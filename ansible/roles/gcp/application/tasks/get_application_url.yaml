@@ -42,9 +42,9 @@
       register: cluster_ingress_ip_address
       changed_when: true
 
-    - name: "{{ service_name }} | Print IP Address"
+    - name: "{{ service_name }} | Print Application URL"
       ansible.builtin.debug:
-        msg: "Cluster Ingress IP Address: {{ cluster_ingress_ip_address.stdout }}"
+        msg: "Application URL: https://{{ cluster_ingress_ip_address.stdout }}"
   always:
     - name: "{{ service_name }} | Clean kubeconfig"
       ansible.builtin.file:

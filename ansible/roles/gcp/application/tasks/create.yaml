@@ -33,5 +33,5 @@
   vars:
     operation: apply
 
-- name: "{{ service_name  }} | Fetch ingress IP address"
-  ansible.builtin.include_tasks: fetch_ingress_ip_address.yaml
+- name: "{{ service_name  }} | Get application URL"
+  ansible.builtin.include_tasks: get_application_url.yaml
