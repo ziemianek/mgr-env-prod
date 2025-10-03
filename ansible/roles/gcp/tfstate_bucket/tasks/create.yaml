@@ -21,14 +21,19 @@
 ########################################################################################
 ---
 
-- name: Create GKE Cluster
-  ansible.builtin.import_playbook: gke_cluster/create.yaml
+- name: "{{ service_name }} | Configure backend.hcl files"
+  ansible.builtin.include_role:
+    name: utils
+    tasks_from: configure_backend_hcl
 
-- name: Create GKE Cluster Addons
-  ansible.builtin.import_playbook: gke_cluster_addons/create.yaml
+- name: "{{ service_name }} | Run Terraform Init"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: init
 
-# - name: Create DNS Record in Cloudflare
-#   ansible.builtin.import_playbook: cloudflare_dns_record/create.yaml
-
-- name: Create Boutique application
-  ansible.builtin.import_playbook: application/create.yaml
+- name: "{{ service_name }} | Run Terraform Apply"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: apply

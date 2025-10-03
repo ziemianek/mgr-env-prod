@@ -19,6 +19,6 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
----
 
-service_name: cloudflare
+bucket  = "terraform-state-uycmnjq4nr"
+prefix = "boutique/vpc"

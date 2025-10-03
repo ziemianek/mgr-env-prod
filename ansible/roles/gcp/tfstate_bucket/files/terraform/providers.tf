@@ -19,16 +19,21 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
----
 
-- name: Create GKE Cluster
-  ansible.builtin.import_playbook: gke_cluster/create.yaml
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 6.27.0"
+    }
+  }
 
-- name: Create GKE Cluster Addons
-  ansible.builtin.import_playbook: gke_cluster_addons/create.yaml
+  required_version = ">= 1.13.3"
 
-# - name: Create DNS Record in Cloudflare
-#   ansible.builtin.import_playbook: cloudflare_dns_record/create.yaml
+  backend "local" {}
+}
 
-- name: Create Boutique application
-  ansible.builtin.import_playbook: application/create.yaml
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}

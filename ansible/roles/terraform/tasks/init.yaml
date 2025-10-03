@@ -39,7 +39,7 @@
   block:
     - name: "{{ service_name }} | Initialize Terraform"
       ansible.builtin.command:
-        cmd: terraform -chdir="{{ tf_directory }}" init -lock=true -input=false -no-color -backend-config="{{ tf_backend_config_file }}"
+        cmd: terraform -chdir="{{ tf_directory }}" init -lock=true -input=false -no-color -backend-config=backend.hcl
       register: tf_init_output
       changed_when: tf_init_output.rc != 0
 

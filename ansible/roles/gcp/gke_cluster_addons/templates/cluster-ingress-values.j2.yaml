@@ -20,31 +20,19 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-# Default values for istio-ingress-gateway-chart
-
-# Domain configuration
-domain:
-  name: "{{ dns_domain_name }}"
-
-# Certificate Manager configuration
-certManager:
-  email: "{{ vault_dns_email }}"
-  server: "https://acme-v02.api.letsencrypt.org/directory"
-  privateKeySecretRef:
-    name: "letsencrypt-prod-account-key"
-  apiTokenSecretRef:
-    name: "cloudflare-api-token-secret"
-    key: "api-token"
-# Certificate configuration
+# todo: move this to helm chart?
+# ===
+# Certificate configuration (self-signed)
 certificate:
   name: "istio-ingress-cert"
   namespace: "istio-ingress"
   secretName: "istio-ingress-cert"
 
-# ClusterIssuer configuration
+# ClusterIssuer configuration - self signed
 clusterIssuer:
-  name: "letsencrypt-prod-ci"
+  name: "selfsigned-cluster-issuer"
   namespace: "istio-ingress"
+  selfSigned: true
 
 # Gateway configuration
 gateway:
@@ -59,13 +47,7 @@ gateway:
     port: 443
     name: "https"
     credentialName: "istio-ingress-cert"
-
-# Secret configuration
-secret:
-  name: cloudflare-api-token-secret
-  namespace: cert-manager
-  type: Opaque
-  apiToken: {{ vault_cloudflare_token }}
+# ===
 
 # Virtual Service configuration
 virtualService:
@@ -73,7 +55,7 @@ virtualService:
   namespace: "istio-ingress"
   gatewayRef: "istio-ingress-gateway"
   hosts:
-    applicationDomain: "{{ dns_domain_name }}"
+    - "*"   # akceptuje każdy host, w tym IP load balancera
   routes:
     frontend:
       host: "frontend.{{ app_name }}.svc.cluster.local"

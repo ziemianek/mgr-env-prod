@@ -19,6 +19,14 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
+---
 
-bucket = "magisterka-tfstate"
-prefix = "boutique/application"
+- name: Create bucket for terraform state in GCP
+  hosts: GcpDeployHost
+  gather_facts: false
+  tasks:
+    - name: Include role for tfstate bucket creation
+      ansible.builtin.include_role:
+        name: gcp/tfstate_bucket
+      vars:
+        mode: create
