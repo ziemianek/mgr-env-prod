@@ -87,12 +87,19 @@ ansible-vault encrypt ansible/inventories/group_vars/gcp/vault.yaml
 ```
 
 ## 9. Ansible
+
+Idz do folderu ansible/ i odpal po kolei komendy
+
 ### 9.1. tfstate bucket
+Ta komenda utworzy bucket w google cloud storage w ktorym bedzie trzymany stan terraforma
+Haslo to to samo haslo co uzyles do zaszyfrowania pliku vault.yaml
 ```sh
+ansible-playbook -i inventories/prod.ini playbooks/gcp/tfstate_bucket/create.yaml -v --ask-vault-pass
 ```
 ### 9.2. vpc
 ```sh
+ansible-playbook -i inventories/prod.ini playbooks/gcp/vpc/create.yaml -v --ask-vault-pass
 ```
-### 9.3. gke cluster
+### 9.3. setup application
 ```sh
 ```

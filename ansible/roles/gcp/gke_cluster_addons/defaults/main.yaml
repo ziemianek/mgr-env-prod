@@ -27,15 +27,15 @@ helm_charts_dir: "{{ role_path }}/../../../helm"
 
 helm_charts:
   cert_manager:
-    path: "{{ helm_charts_dir }}/cert-manager-v1.17.1"
+    path: "{{ helm_charts_dir }}/cert-manager"
   istio_base:
-    path: "{{ helm_charts_dir }}/istio-base-1.25.2"
+    path: "{{ helm_charts_dir }}/istio-base"
   istiod:
-    path: "{{ helm_charts_dir }}/istiod-1.25.2"
+    path: "{{ helm_charts_dir }}/istiod"
   istio_gateway:
-    path: "{{ helm_charts_dir }}/istio-gateway-1.25.2"
+    path: "{{ helm_charts_dir }}/istio-gateway"
   cluster_ingress:
-    path: "{{ helm_charts_dir }}/cluster-ingress-1.0.0"
+    path: "{{ helm_charts_dir }}/cluster-ingress"
 
 cluster_istio_ingress_template_path: "{{ role_path }}/templates/cluster-ingress-values.j2.yaml"
 cluster_istio_ingress_rendered_template_path: /tmp/cluster-ingress-values.yaml
