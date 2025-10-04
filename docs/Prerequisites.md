@@ -12,10 +12,9 @@ Make sure the following tools are installed:
 
 - (optional) [Helm 3.19.0](https://helm.sh/docs/intro/install/)
 
-Create and activate a virtual environment:
+Create and activate a virtual environment (This will install Ansible 12.0.0 [core 2.19.2]):
 ```sh
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
-This will install Ansible 12.0.0 [core 2.19.2]
