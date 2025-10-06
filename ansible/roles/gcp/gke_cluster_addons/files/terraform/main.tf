@@ -88,7 +88,7 @@ resource "helm_release" "cluster_ingress" {
 resource "helm_release" "kube_prometheus_stack" {
   name      = "kube-prometheus-stack"
   chart     = var.kube_prometheus_stack
-  namespace = "monitoring"
+  namespace = var.monitoring_namespace
 
   create_namespace = true
 

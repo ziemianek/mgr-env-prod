@@ -116,7 +116,7 @@ At the end, you will get a URL that you can use to access the application, for e
 
 # Connect to GKE Cluster using local kubectl
 
-Just this one command...
+You need just this one command...
 ```sh
 gcloud container clusters get-credentials boutique-k8s-cluster --region europe-central2
 ```
@@ -129,6 +129,6 @@ kubectl get ns
 and the whole kubectl world is now open for you!
 
 # Grafana
-Code automatically forwards grafana to `localhost:3000`.
+Ansible automation automatically forwards grafana to `localhost:3000`.
 
 You can log in using credentials defined in `ansible/inventories/group_vars/gcp/vault.yaml`

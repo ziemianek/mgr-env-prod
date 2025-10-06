@@ -23,7 +23,7 @@
 resource "helm_release" "boutique" {
   name      = "boutique"
   chart     = var.application_helm_chart_path
-  namespace = "boutique"
+  namespace = var.application_namespace
 
   create_namespace = true
 }

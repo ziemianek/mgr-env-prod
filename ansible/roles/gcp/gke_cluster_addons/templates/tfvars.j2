@@ -20,9 +20,10 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-project_id   = "{{ gcp_project_id }}"
-region       = "{{ gcp_region }}"
-cluster_name = "{{ cluster_name }}"
+project_id           = "{{ gcp_project_id }}"
+region               = "{{ gcp_region }}"
+cluster_name         = "{{ cluster_name }}"
+monitoring_namespace = "{{ monitoring_namespace }}"
 
 # Addons
 cert_manager          = "{{ helm_charts.cert_manager.path }}"

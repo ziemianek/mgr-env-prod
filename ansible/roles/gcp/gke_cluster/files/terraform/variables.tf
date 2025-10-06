@@ -67,3 +67,15 @@ variable "machine_type" {
   type        = string
   nullable    = false
 }
+
+variable "monitoring_node_label" {
+  description = "Label for node where monitoring components live"
+  type        = string
+  nullable    = false
+}
+
+variable "application_node_label" {
+  description = "Label for node where application live"
+  type        = string
+  nullable    = false
+}

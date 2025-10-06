@@ -157,7 +157,7 @@ resource "google_container_node_pool" "primary_nodes" {
     ]
 
     labels = {
-      role = "application"
+      role = var.application_node_label
     }
   }
 }
@@ -191,7 +191,7 @@ resource "google_container_node_pool" "monitoring_nodes" {
     ]
 
     labels = {
-      role = "monitoring"
+      role = var.monitoring_node_label
     }
   }
 }
