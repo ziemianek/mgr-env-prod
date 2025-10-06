@@ -43,3 +43,9 @@ variable "application_helm_chart_path" {
   type        = string
   nullable    = false
 }
+
+variable "application_namespace" {
+  description = "Namespace where application pods live"
+  type        = string
+  nullable    = false
+}

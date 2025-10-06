@@ -128,16 +128,17 @@ resource "google_container_cluster" "primary" {
 
 # Node pool
 resource "google_container_node_pool" "primary_nodes" {
-  name     = "${var.cluster_name}-node-pool"
+  name     = "${var.cluster_name}-primary-np"
   cluster  = google_container_cluster.primary.name
   location = var.region
 
   node_locations = ["${var.region}-a"]
 
-  initial_node_count = 3 # 3 nodes baseline
+  # initial_node_count może zostać 1 (to stan początkowy, autoscaler potem podnosi/obniża)
+  initial_node_count = 1
 
   autoscaling {
-    total_min_node_count = 3 # fix at 3 for fairness
+    total_min_node_count = 1
     total_max_node_count = 3
   }
 
@@ -154,5 +155,43 @@ resource "google_container_node_pool" "primary_nodes" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+
+    labels = {
+      role = var.application_node_label
+    }
+  }
+}
+
+resource "google_container_node_pool" "monitoring_nodes" {
+  name     = "${var.cluster_name}-monitoring-np"
+  cluster  = google_container_cluster.primary.name
+  location = var.region
+
+  node_locations = ["${var.region}-a"]
+
+  initial_node_count = 1
+
+  autoscaling {
+    total_min_node_count = 1
+    total_max_node_count = 1
+  }
+
+  management {
+    auto_upgrade = true
+    auto_repair  = true
+  }
+
+  node_config {
+    preemptible  = false
+    machine_type = var.machine_type
+    disk_size_gb = 50
+    disk_type    = "pd-balanced"
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+
+    labels = {
+      role = var.monitoring_node_label
+    }
   }
 }

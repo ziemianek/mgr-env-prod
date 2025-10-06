@@ -37,8 +37,10 @@
       changed_when: true
 
     - name: "{{ service_name }} | Get Cluster Ingress IP Address"
-      ansible.builtin.command: |
-        kubectl get svc -n istio-ingress -o jsonpath='{.items[*].status.loadBalancer.ingress[*].ip}'
+      ansible.builtin.command: >
+        kubectl get svc 
+        --namespace istio-ingress 
+        --output jsonpath='{.items[*].status.loadBalancer.ingress[*].ip}'
       register: cluster_ingress_ip_address
       changed_when: true
 
