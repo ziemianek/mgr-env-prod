@@ -36,7 +36,7 @@ resource "helm_release" "istio_base" {
 resource "helm_release" "istiod" {
   name       = "istiod"
   chart      = var.istiod
-  namespace  = helm_release.istio_base.namespace
+  namespace  = "istio-system"
   depends_on = [helm_release.istio_base]
 
   set {
@@ -76,9 +76,21 @@ resource "helm_release" "cluster_ingress" {
   name      = "cluster-ingress"
   chart     = var.cluster_ingress
   namespace = "istio-ingress"
+
   depends_on = [
     helm_release.istio_ingress_gateway,
     helm_release.cert_manager
   ]
-  values = ["${file(var.cluster_ingress_values)}"]
+
+  values = ["${file(var.values_cluster_ingress)}"]
+}
+
+resource "helm_release" "kube_prometheus_stack" {
+  name      = "kube-prometheus-stack"
+  chart     = var.kube_prometheus_stack
+  namespace = var.monitoring_namespace
+
+  create_namespace = true
+
+  values = ["${file(var.values_kube_prometheus_stack)}"]
 }

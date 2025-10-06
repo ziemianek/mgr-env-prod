@@ -24,10 +24,6 @@
 - name: Delete Boutique Application
   ansible.builtin.import_playbook: application/delete.yaml
 
-# Commented out to prevent dns propagation delay
-# - name: Delete DNS Record in Cloudflare
-#   ansible.builtin.import_playbook: cloudflare_dns_record/delete.yaml
-
 - name: Delete GKE Cluster Addons
   ansible.builtin.import_playbook: gke_cluster_addons/delete.yaml
 

@@ -1,4 +1,4 @@
-# How to Set Up a GKE Cluster
+# Deploy Boutique Application on GKE
 
 ## Prerequisites
 Start with [Prerequisites](./Prerequisites.md).
@@ -113,3 +113,22 @@ ansible-playbook -i inventories/prod.ini playbooks/gcp/create_boutique.yaml -v -
 ```
 
 At the end, you will get a URL that you can use to access the application, for example: `https://34.118.2.252/`
+
+# Connect to GKE Cluster using local kubectl
+
+You need just this one command...
+```sh
+gcloud container clusters get-credentials boutique-k8s-cluster --region europe-central2
+```
+
+Run this command to verify if you have access to your GKE cluster
+```sh
+kubectl get ns
+```
+
+and the whole kubectl world is now open for you!
+
+# Grafana
+Ansible automation automatically forwards grafana to `localhost:3000`.
+
+You can log in using credentials defined in `ansible/inventories/group_vars/gcp/vault.yaml`
