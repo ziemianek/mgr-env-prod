@@ -15,7 +15,11 @@
 
     - name: Get monitoring node name
       ansible.builtin.command:
-        cmd: kubectl get nodes -l role=monitoring -o custom-columns=NAME:.metadata.name --no-headers
+        cmd: >
+          kubectl get nodes 
+          -l role="{{ monitoring_namespace }}" 
+          -o custom-columns=NAME:.metadata.name 
+          --no-headers
       register: monitoring_node_name
 
     - name: Print monitoring node name
@@ -24,7 +28,7 @@
 
     - name: Set taint for monitoring nodes
       ansible.builtin.command:
-        cmd: kubectl taint nodes "{{ monitoring_node_name.stdout }}" dedicated=monitoring:NoSchedule
+        cmd: kubectl taint nodes "{{ monitoring_node_name.stdout }}" dedicated="{{ monitoring_namespace }}":NoSchedule
 
   always:
     - name: "{{ service_name }} | Clean kubeconfig"

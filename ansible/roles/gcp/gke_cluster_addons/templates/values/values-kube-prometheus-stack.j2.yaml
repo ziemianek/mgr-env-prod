@@ -1,49 +1,51 @@
 ---
+
+# TODO: make this a loop?
 prometheusOperator:
   nodeSelector:
-    role: monitoring
+    role: "{{ monitoring_namespace }}"
   tolerations:
     - key: "dedicated"
       operator: "Equal"
-      value: "monitoring"
+      value: "{{ monitoring_namespace }}"
       effect: "NoSchedule"
 
 prometheus:
   prometheusSpec:
     nodeSelector:
-      role: monitoring
+      role: "{{ monitoring_namespace }}"
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "monitoring"
+        value: "{{ monitoring_namespace }}"
         effect: "NoSchedule"
 
 alertmanager:
   alertmanagerSpec:
     nodeSelector:
-      role: monitoring
+      role: "{{ monitoring_namespace }}"
     tolerations:
       - key: "dedicated"
         operator: "Equal"
-        value: "monitoring"
+        value: "{{ monitoring_namespace }}"
         effect: "NoSchedule"
 
 grafana:
   adminUser: "{{ vault_grafana_admin_username }}"
   adminPassword: "{{ vault_grafana_admin_password }}"
   nodeSelector:
-    role: monitoring
+    role: "{{ monitoring_namespace }}"
   tolerations:
     - key: "dedicated"
       operator: "Equal"
-      value: "monitoring"
+      value: "{{ monitoring_namespace }}"
       effect: "NoSchedule"
 
 kube-state-metrics:
   nodeSelector:
-    role: monitoring
+    role: "{{ monitoring_namespace }}"
   tolerations:
     - key: "dedicated"
       operator: "Equal"
-      value: "monitoring"
+      value: "{{ monitoring_namespace }}"
       effect: "NoSchedule"

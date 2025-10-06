@@ -88,3 +88,9 @@ variable "values_kube_prometheus_stack" {
   type        = string
   nullable    = false
 }
+
+variable "monitoring_namespace" {
+  description = "Namespace where monitoring components live"
+  type        = string
+  nullable    = false
+}
