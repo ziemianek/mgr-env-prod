@@ -36,8 +36,11 @@ helm_charts:
     path: "{{ helm_charts_dir }}/istio-gateway"
   cluster_ingress:
     path: "{{ helm_charts_dir }}/cluster-ingress"
+  kube_prometheus_stack:
+    path: "{{ helm_charts_dir }}/kube-prometheus-stack"
 
-cluster_istio_ingress_template_path: "{{ role_path }}/templates/cluster-ingress-values.j2.yaml"
-cluster_istio_ingress_rendered_template_path: /tmp/cluster-ingress-values.yaml
+cluster_ingress_values_template_path: "{{ role_path }}/templates/values/values-cluster-ingress.j2.yaml"
+cluster_ingress_values_rendered_template_path: /tmp/values-cluster-ingress.yaml
 
-save_template: true # Uncomment to save the rendered template
+monitoring_values_template_path: "{{ role_path }}/templates/values/values-kube-prometheus-stack.j2.yaml"
+monitoring_values_rendered_template_path: /tmp/values-kube-prometheus-stack.yaml

@@ -1,0 +1,72 @@
+########################################################################################
+# Project: 
+#   Managed Kubernetes Services: A Comparison of AKS, EKS and GKE
+#
+# Author:  
+#   Michał Ziemianek
+#
+# Description:
+#   The project focuses on deploying and benchmarking
+#   a microservices-based application using Kubernetes and cloud-native technologies
+#   (Terraform, Ansible, Helm, Prometheus, Grafana, K6).
+#
+# License:
+#   Apache 2.0
+#
+# Notes:
+#   - This code is intended for educational and research purposes.
+#   - Ensure proper configuration of cloud resources before execution.
+#
+# © 2025 Michał Ziemianek. All rights reserved.
+########################################################################################
+---
+
+# TODO: make this a common role for all clouds
+
+# Wrapped in a block to pass env variables
+# https://github.com/ansible/ansible/issues/53626
+- name: "{{ service_name }} | Block wrapper"
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_path }}"
+  block:
+    - name: "{{ service_name }} | Get kubeconfig for the '{{ cluster_name }}' cluster"
+      ansible.builtin.command: >
+        gcloud container clusters get-credentials {{ cluster_name }}
+        --project {{ gcp_project_id }}
+        --region {{ gcp_region }}
+      changed_when: true
+
+    - name: Get Grafana pod name
+      ansible.builtin.command:
+        cmd: >
+          kubectl --namespace monitoring get pod
+          -l app.kubernetes.io/name=grafana,app.kubernetes.io/instance=kube-prometheus-stack
+          -o name
+      register: grafana_pod
+      # changed_when: false
+
+    - name: Display Grafana pod name
+      ansible.builtin.debug:
+        msg: "Grafana pod: {{ grafana_pod.stdout }}"
+
+    - name: Port-forward Grafana to localhost:3000
+      ansible.builtin.shell: |
+        nohup kubectl --namespace monitoring port-forward {{ grafana_pod.stdout }} 3000:3000 > /tmp/grafana-port-forward.log 2>&1 &
+      async: 0
+      poll: 0
+      # changed_when: false
+      # ignore_errors: true
+
+    - name: Wait for Grafana port to be available
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 3000
+        delay: 3
+        timeout: 30
+      # changed_when: false
+  
+  always:
+    - name: "{{ service_name }} | Clean kubeconfig"
+      ansible.builtin.file:
+        path: "{{ k8s_kubeconfig_path }}"
+        state: absent

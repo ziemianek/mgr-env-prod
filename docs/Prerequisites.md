@@ -10,7 +10,9 @@ Make sure the following tools are installed:
 
 - [kubectl 1.34.1](https://kubernetes.io/docs/tasks/tools/)
 
-- (optional) [Helm 3.19.0](https://helm.sh/docs/intro/install/)
+- [Helm 3.19.0](https://helm.sh/docs/intro/install/)
+
+- [k6 v1.3.0](https://grafana.com/docs/k6/latest/set-up/install-k6/)
 
 Create and activate a virtual environment (This will install Ansible 12.0.0 [core 2.19.2]):
 ```sh

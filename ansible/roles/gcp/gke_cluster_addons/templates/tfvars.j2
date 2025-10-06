@@ -25,10 +25,13 @@ region       = "{{ gcp_region }}"
 cluster_name = "{{ cluster_name }}"
 
 # Addons
-cert_manager    = "{{ helm_charts.cert_manager.path }}"
-cluster_ingress = "{{ helm_charts.cluster_ingress.path }}"
-istiod          = "{{ helm_charts.istiod.path }}"
-istio_base      = "{{ helm_charts.istio_base.path }}"
-istio_gateway   = "{{ helm_charts.istio_gateway.path }}"
+cert_manager          = "{{ helm_charts.cert_manager.path }}"
+cluster_ingress       = "{{ helm_charts.cluster_ingress.path }}"
+istiod                = "{{ helm_charts.istiod.path }}"
+istio_base            = "{{ helm_charts.istio_base.path }}"
+istio_gateway         = "{{ helm_charts.istio_gateway.path }}"
+kube_prometheus_stack = "{{ helm_charts.kube_prometheus_stack.path }}"
 
-cluster_ingress_values = "{{ cluster_istio_ingress_rendered_template_path }}"
+# Values for addons charts
+values_cluster_ingress       = "{{ cluster_ingress_values_rendered_template_path }}"
+values_kube_prometheus_stack = "{{ monitoring_values_rendered_template_path }}"
