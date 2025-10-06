@@ -23,4 +23,4 @@
 
 virtualService:
   destination:
-    host: "frontend.{{ app_name }}.svc.cluster.local"
+    host: "frontend.{{ application_namespace }}.svc.cluster.local"

@@ -21,8 +21,8 @@
 ########################################################################################
 ---
 
-# - name: Create GKE Cluster
-#   ansible.builtin.import_playbook: gke_cluster/create.yaml
+- name: Create GKE Cluster
+  ansible.builtin.import_playbook: gke_cluster/create.yaml
 
 - name: Create GKE Cluster Addons
   ansible.builtin.import_playbook: gke_cluster_addons/create.yaml
