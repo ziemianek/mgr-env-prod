@@ -32,3 +32,6 @@
     name: terraform
   vars:
     operation: apply
+
+- name: "{{ service_name }} | Configure port forwarding for local grafana access"
+  ansible.builtin.include_tasks: grafana_port_forward.yaml

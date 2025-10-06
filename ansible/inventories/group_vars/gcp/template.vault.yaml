@@ -40,3 +40,7 @@ vault_gcp_credentials: |
 # Don't touch those =)
 vault_gcp_project_id: "{{ (vault_gcp_credentials | from_json).project_id }}"
 vault_gcp_tfsa_client_email: "{{ (vault_gcp_credentials | from_json).client_email }}"
+
+# Replace with your own credentials, or leave as it is...
+vault_grafana_admin_username: admin
+vault_grafana_admin_password: password

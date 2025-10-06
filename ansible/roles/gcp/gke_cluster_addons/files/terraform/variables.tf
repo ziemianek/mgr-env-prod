@@ -70,8 +70,21 @@ variable "cluster_ingress" {
   nullable    = false
 }
 
-variable "cluster_ingress_values" {
+variable "values_cluster_ingress" {
   description = "Path to values for the cluster-ingress Helm chart"
+  type        = string
+  nullable    = false
+}
+
+# Monitoring
+variable "kube_prometheus_stack" {
+  description = "Path to the kube-prometheus-stack Helm chart"
+  type        = string
+  nullable    = false
+}
+
+variable "values_kube_prometheus_stack" {
+  description = "Path to values for the kube-prometheus-stack Helm chart"
   type        = string
   nullable    = false
 }
