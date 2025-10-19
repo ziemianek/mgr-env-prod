@@ -4,21 +4,31 @@ import { check, sleep } from 'k6';
 // ======== Test Configuration ========
 export const options = {
   scenarios: {
-    stress: {
+    stress_test: {
       executor: 'ramping-vus',
+      startVUs: 0,
       stages: [
-        { duration: '1m', target: 20 },  // warm-up
-        { duration: '2m', target: 100 }, // moderate load
-        { duration: '2m', target: 200 }, // push cluster
-        { duration: '1m', target: 0 },   // cool down
+        { duration: '1m', target: 50 },   // warm-up
+        { duration: '2m', target: 200 },  // moderate load
+        { duration: '2m', target: 500 },  // high load
+        { duration: '2m', target: 1000 },  // stress peak
+        { duration: '2m', target: 2000 }, // maximum stress
+        { duration: '1m', target: 0 },    // ramp down
       ],
-      gracefulRampDown: '30s',
+      gracefulRampDown: '1m',
     },
   },
   thresholds: {
-    http_req_failed: ['rate<0.05'],   // allow up to 5% errors under stress
-    http_req_duration: ['p(95)<1200'], // p95 latency under 1.2s
+    http_req_failed: [
+      'rate<0.10', // tolerate up to 10% errors at peak
+    ],
+    http_req_duration: [
+      'p(95)<2000', // 95% of requests should finish under 2s
+      'p(99)<4000', // 99% under 4s
+    ],
+    vus: ['value>=800'], // ensure we hit target VUs
   },
+  discardResponseBodies: true,
 };
 
 // ======== Test Logic ========
