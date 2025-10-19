@@ -14,6 +14,11 @@ prometheus:
   prometheusSpec:
     nodeSelector:
       role: "{{ monitoring_namespace }}"
+    serviceMonitorSelector: {}
+    podMonitorSelector: {}
+    probeSelector: {}
+    ruleSelector: {}
+    serviceMonitorNamespaceSelector: {}
     tolerations:
       - key: "dedicated"
         operator: "Equal"
@@ -39,6 +44,8 @@ kube-state-metrics:
       value: "{{ monitoring_namespace }}"
       effect: "NoSchedule"
 
+
+# TODO: add dashboards from files/dashboards
 grafana:
   adminUser: "{{ vault_grafana_admin_username }}"
   adminPassword: "{{ vault_grafana_admin_password }}"
@@ -49,24 +56,3 @@ grafana:
       operator: "Equal"
       value: "{{ monitoring_namespace }}"
       effect: "NoSchedule"
-  sidecar:
-    dashboards:
-      enabled: true
-      label: grafana_dashboard
-  dashboardProviders:
-   dashboardproviders.yaml:
-     apiVersion: 1
-     providers:
-     - name: 'default'
-       orgId: 1
-       folder: ''
-       type: file
-       disableDeletion: false
-       editable: true
-       options:
-         path: /var/lib/grafana/dashboards/default
-  dashboards:
-    default:
-      k6-cloud-benchmarking:
-        json: |
-          {{ lookup('file', role_path + '/files/dashboards/k6-benchmarking.json') | indent(10) }}
