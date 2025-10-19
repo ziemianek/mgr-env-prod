@@ -7,8 +7,8 @@ export const options = {
     soak: {
       executor: 'ramping-vus',
       stages: [
-        { duration: '5m', target: 20 },   // warm up
-        { duration: '4h', target: 50 },   // steady-state load
+        { duration: '5m', target: 50 },   // warm up
+        { duration: '4h', target: 300 },   // steady-state load
         { duration: '5m', target: 0 },    // ramp down
       ],
       gracefulRampDown: '1m',

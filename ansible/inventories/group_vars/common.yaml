@@ -20,18 +20,14 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 ---
-app_name: boutique
 
-# dns_root_domain_name: ziemian.top
-# dns_domain_name: "{{ app_name }}-{{ cloud_name }}.{{ dns_root_domain_name }}"
+app_name: boutique
 
 vpc_name: "{{ app_name }}-vpc"
 
 cluster_name: "{{ app_name }}-k8s-cluster"
 
 k8s_kubeconfig_path: "/tmp/{{ cluster_name }}-kubeconfig"
-
-repo_url: https://github.com/ziemianek/mgr-env-prod
 
 monitoring_namespace: monitoring
 application_namespace: "{{ app_name }}"

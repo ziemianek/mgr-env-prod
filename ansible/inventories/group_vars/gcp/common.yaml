@@ -28,13 +28,9 @@ gcp_region: europe-central2 # Warsaw
 gcp_project_id: "{{ vault_gcp_project_id }}"
 
 # Terraform
-tf_backend_type: gcs
 tf_environment:
   GOOGLE_CREDENTIALS: "{{ vault_gcp_credentials }}"
 
 # GKE
-gke_node_count: 3
-gke_node_machine_type: e2-standard-2
-gke_node_disk_size: 20
 gke_subnet_cidr: 10.10.0.0/20
 gke_subnet_name: "{{ app_name }}-gke-subnet"

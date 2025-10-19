@@ -128,18 +128,17 @@ resource "google_container_cluster" "primary" {
 
 # Node pool
 resource "google_container_node_pool" "primary_nodes" {
-  name     = "${var.cluster_name}-primary-np"
+  name     = "primary-node-pool"
   cluster  = google_container_cluster.primary.name
   location = var.region
 
   node_locations = ["${var.region}-a"]
 
-  # initial_node_count może zostać 1 (to stan początkowy, autoscaler potem podnosi/obniża)
   initial_node_count = 1
 
   autoscaling {
     total_min_node_count = 1
-    total_max_node_count = 3
+    total_max_node_count = 2
   }
 
   management {
@@ -149,7 +148,7 @@ resource "google_container_node_pool" "primary_nodes" {
 
   node_config {
     preemptible  = false # on-demand for fairness baseline
-    machine_type = var.machine_type
+    machine_type = "e2-standard-4"
     disk_size_gb = 50
     disk_type    = "pd-balanced"
     oauth_scopes = [
@@ -163,7 +162,7 @@ resource "google_container_node_pool" "primary_nodes" {
 }
 
 resource "google_container_node_pool" "monitoring_nodes" {
-  name     = "${var.cluster_name}-monitoring-np"
+  name     = "monitoring-node-pool"
   cluster  = google_container_cluster.primary.name
   location = var.region
 
@@ -183,7 +182,7 @@ resource "google_container_node_pool" "monitoring_nodes" {
 
   node_config {
     preemptible  = false
-    machine_type = var.machine_type
+    machine_type = "e2-standard-2"
     disk_size_gb = 50
     disk_type    = "pd-balanced"
     oauth_scopes = [

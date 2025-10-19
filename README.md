@@ -24,4 +24,6 @@ The goal of this project is to **compare managed Kubernetes services** in terms 
 
 [How to setup EKS Cluster](./docs/Setup_GKE.md)
 
-[How to perform testing]()
+[How to perform testing](./docs/Testing.md)
+
+[Access monitoring dashboards](./docs/Monitoring.md)
