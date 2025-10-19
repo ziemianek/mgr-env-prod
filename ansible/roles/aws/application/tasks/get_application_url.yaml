@@ -31,40 +31,20 @@
   block:
     - name: "{{ service_name }} | Get kubeconfig for the '{{ cluster_name }}' cluster"
       ansible.builtin.command: >
-        gcloud container clusters get-credentials {{ cluster_name }}
-        --project {{ gcp_project_id }}
-        --region {{ gcp_region }}
+        aws eks update-kubeconfig --name {{ cluster_name }} --region {{ aws_region }}
       changed_when: true
 
-    - name: Get Grafana pod name
-      ansible.builtin.command:
-        cmd: >
-          kubectl --namespace "{{ monitoring_namespace }}" get pod
-          -l app.kubernetes.io/name=grafana,app.kubernetes.io/instance=kube-prometheus-stack
-          -o name
-      register: grafana_pod
-      # changed_when: false
+    - name: "{{ service_name }} | Get Cluster Ingress Hostname"
+      ansible.builtin.command: >
+        kubectl get svc 
+        --namespace istio-ingress 
+        --output jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'
+      register: cluster_ingress_hostname
+      changed_when: true
 
-    - name: Display Grafana pod name
+    - name: "{{ service_name }} | Print Application URL"
       ansible.builtin.debug:
-        msg: "Grafana pod: {{ grafana_pod.stdout }}"
-
-    - name: Port-forward Grafana to localhost:3000
-      ansible.builtin.shell: |
-        nohup kubectl --namespace "{{ monitoring_namespace }}" port-forward {{ grafana_pod.stdout }} 3000:3000 > /tmp/grafana-port-forward.log 2>&1 &
-      async: 0
-      poll: 0
-      # changed_when: false
-      # ignore_errors: true
-
-    - name: Wait for Grafana port to be available
-      ansible.builtin.wait_for:
-        host: 127.0.0.1
-        port: 3000
-        delay: 3
-        timeout: 30
-      # changed_when: false
-  
+        msg: "Application URL: https://{{ cluster_ingress_hostname.stdout }}"
   always:
     - name: "{{ service_name }} | Clean kubeconfig"
       ansible.builtin.file:

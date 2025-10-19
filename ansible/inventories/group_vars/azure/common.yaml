@@ -20,3 +20,12 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 ---
+
+cloud_name: azure
+
+# GCP
+azure_location:
+
+# Terraform
+tf_environment:
+  ...

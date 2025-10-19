@@ -116,6 +116,11 @@ At the end, you will get a URL that you can use to access the application, for e
 
 # Connect to GKE Cluster using local kubectl
 
+Install GKE auth plugin:
+```sh
+gcloud components install gke-gcloud-auth-plugin
+```
+
 You need just this one command...
 ```sh
 gcloud container clusters get-credentials boutique-k8s-cluster --region europe-central2

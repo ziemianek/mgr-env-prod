@@ -14,6 +14,11 @@ prometheus:
   prometheusSpec:
     nodeSelector:
       role: "{{ monitoring_namespace }}"
+    serviceMonitorSelector: {}
+    podMonitorSelector: {}
+    probeSelector: {}
+    ruleSelector: {}
+    serviceMonitorNamespaceSelector: {}
     tolerations:
       - key: "dedicated"
         operator: "Equal"
@@ -30,9 +35,7 @@ alertmanager:
         value: "{{ monitoring_namespace }}"
         effect: "NoSchedule"
 
-grafana:
-  adminUser: "{{ vault_grafana_admin_username }}"
-  adminPassword: "{{ vault_grafana_admin_password }}"
+kube-state-metrics:
   nodeSelector:
     role: "{{ monitoring_namespace }}"
   tolerations:
@@ -41,7 +44,11 @@ grafana:
       value: "{{ monitoring_namespace }}"
       effect: "NoSchedule"
 
-kube-state-metrics:
+
+# TODO: add dashboards from files/dashboards
+grafana:
+  adminUser: "{{ vault_grafana_admin_username }}"
+  adminPassword: "{{ vault_grafana_admin_password }}"
   nodeSelector:
     role: "{{ monitoring_namespace }}"
   tolerations:

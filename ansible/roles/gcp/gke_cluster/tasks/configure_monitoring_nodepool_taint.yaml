@@ -13,6 +13,7 @@
         --region {{ gcp_region }}
       changed_when: true
 
+    # TODO: refactor this
     - name: Get monitoring node name
       ansible.builtin.command:
         cmd: >
