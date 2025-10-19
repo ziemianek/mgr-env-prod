@@ -1,0 +1,46 @@
+########################################################################################
+# Project: 
+#   Managed Kubernetes Services: A Comparison of AKS, EKS and GKE
+#
+# Author:  
+#   Michał Ziemianek
+#
+# Description:
+#   The project focuses on deploying and benchmarking
+#   a microservices-based application using Kubernetes and cloud-native technologies
+#   (Terraform, Ansible, Helm, Prometheus, Grafana, K6).
+#
+# License:
+#   Apache 2.0
+#
+# Notes:
+#   - This code is intended for educational and research purposes.
+#   - Ensure proper configuration of cloud resources before execution.
+#
+# © 2025 Michał Ziemianek. All rights reserved.
+########################################################################################
+---
+
+service_name: eks_cluster_addons
+
+helm_charts_dir: "{{ role_path }}/../../../helm"
+
+helm_charts:
+  cert_manager:
+    path: "{{ helm_charts_dir }}/cert-manager"
+  istio_base:
+    path: "{{ helm_charts_dir }}/istio-base"
+  istiod:
+    path: "{{ helm_charts_dir }}/istiod"
+  istio_gateway:
+    path: "{{ helm_charts_dir }}/istio-gateway"
+  cluster_ingress:
+    path: "{{ helm_charts_dir }}/cluster-ingress"
+  kube_prometheus_stack:
+    path: "{{ helm_charts_dir }}/kube-prometheus-stack"
+
+cluster_ingress_values_template_path: "{{ role_path }}/templates/values/values-cluster-ingress.j2.yaml"
+cluster_ingress_values_rendered_template_path: /tmp/values-cluster-ingress.yaml
+
+monitoring_values_template_path: "{{ role_path }}/templates/values/values-kube-prometheus-stack.j2.yaml"
+monitoring_values_rendered_template_path: /tmp/values-kube-prometheus-stack.yaml
