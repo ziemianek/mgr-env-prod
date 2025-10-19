@@ -20,3 +20,12 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 ---
+
+cloud_name: aws
+
+# GCP
+aws_region: 
+
+# Terraform
+tf_environment:
+  ...
