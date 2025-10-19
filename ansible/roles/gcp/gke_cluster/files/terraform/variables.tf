@@ -56,18 +56,6 @@ variable "cluster_name" {
   nullable    = false
 }
 
-variable "node_count" {
-  description = "Number of nodes in the node pool"
-  type        = number
-  nullable    = false
-}
-
-variable "machine_type" {
-  description = "Machine type for the node pool"
-  type        = string
-  nullable    = false
-}
-
 variable "monitoring_node_label" {
   description = "Label for node where monitoring components live"
   type        = string
