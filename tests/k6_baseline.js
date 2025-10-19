@@ -1,33 +1,23 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-// ======== Test Configuration ========
+// ======== Test Options ========
 export const options = {
   scenarios: {
-    stress_test: {
+    baseline: {
       executor: 'ramping-vus',
-      startVUs: 0,
       stages: [
-        { duration: '1m', target: 50 },   // warm-up
-        { duration: '2m', target: 200 },  // moderate load
-        { duration: '2m', target: 500 },  // high load
-        { duration: '2m', target: 1000 },  // stress peak
-        { duration: '2m', target: 2000 }, // maximum stress
-        { duration: '1m', target: 0 },    // ramp down
+        { duration: '1m', target: 50 }, // ramp up
+        { duration: '3m', target: 50 }, // sustain load
+        { duration: '1m', target: 0 },  // ramp down
       ],
-      gracefulRampDown: '1m',
+      gracefulRampDown: '30s',
     },
   },
   thresholds: {
-    http_req_failed: [
-      'rate<0.10', // tolerate up to 10% errors at peak
-    ],
-    http_req_duration: [
-      'p(95)<2000', // 95% of requests should finish under 2s
-      'p(99)<4000', // 99% under 4s
-    ]
+    http_req_failed: ['rate<0.02'],     // <2% errors allowed
+    http_req_duration: ['p(95)<800'],   // 95% under 800ms
   },
-  discardResponseBodies: true,
 };
 
 // ======== Test Logic ========
@@ -41,20 +31,28 @@ export default function () {
   const jar = http.cookieJar();
   const pid = products[Math.floor(Math.random() * products.length)];
 
-  // 1️⃣ Visit homepage
+  // Visit homepage (sets session)
   let res = http.get(`${BASE}/`, { jar });
   check(res, { 'home OK': (r) => r.status === 200 });
 
-  // 2️⃣ Add product to cart (multipart form)
+  // Randomly browse 1–3 products
+  for (let i = 0; i < Math.floor(Math.random() * 3) + 1; i++) {
+    const product = products[Math.floor(Math.random() * products.length)];
+    res = http.get(`${BASE}/product/${product}`, { jar });
+    check(res, { 'product OK': (r) => r.status === 200 });
+    sleep(0.5);
+  }
+
+  // Add to cart (multipart/form-data)
   const addToCartForm = { product_id: pid, quantity: 1 };
   res = http.post(`${BASE}/cart`, addToCartForm, { jar });
   check(res, { 'add to cart OK': (r) => r.status === 200 || r.status === 302 });
 
-  // 3️⃣ View cart
+  // View cart
   res = http.get(`${BASE}/cart`, { jar });
   check(res, { 'view cart OK': (r) => r.status === 200 });
 
-  // 4️⃣ Checkout (multipart form)
+  // Checkout (multipart/form-data)
   const checkoutForm = {
     email: 'someone@example.com',
     street_address: '1600 Amphitheatre Parkway',
@@ -70,5 +68,6 @@ export default function () {
   res = http.post(`${BASE}/cart/checkout`, checkoutForm, { jar });
   check(res, { 'checkout OK': (r) => r.status === 200 || r.status === 302 });
 
-  sleep(Math.random() * 2); // small think time
+  // Pause 1–3 seconds before next iteration
+  sleep(Math.random() * 2 + 1);
 }
