@@ -23,4 +23,4 @@
 resource_group_name  = "tfstate"
 storage_account_name = "tfstate"
 container_name       = "tfstate"
-key                  = "boutique/vpc.terraform.tfstate"
+key                  = "boutique/application.terraform.tfstate"
