@@ -22,11 +22,11 @@
 ---
 
 - name: Delete bucket for terraform state in GCP
-  hosts: gcp
+  hosts: AzureDeployHost
   gather_facts: false
   tasks:
     - name: Include role for tfstate bucket deletion
       ansible.builtin.include_role:
-        name: gcp/tfstate_bucket
+        name: azure/tfstate_bucket
       vars:
         mode: delete

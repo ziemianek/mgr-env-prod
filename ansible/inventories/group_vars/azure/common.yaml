@@ -23,7 +23,8 @@
 
 cloud_name: azure
 
-azure_location: europe-west
+azure_location: westeurope
+resource_group_name: "{{ app_name }}"
 
 tf_environment:
   ARM_CLIENT_ID: "{{ vault_azure_client_id }}"

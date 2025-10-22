@@ -21,12 +21,12 @@
 ########################################################################################
 ---
 
-- name: Create VPC in GCP
-  hosts: GcpDeployHost
+- name: Create VNET in Azure
+  hosts: AzureDeployHost
   gather_facts: false
   tasks:
-    - name: Include role for VPC creation
+    - name: Include role for VNET creation
       ansible.builtin.include_role:
-        name: gcp/vpc
+        name: azure/vnet
       vars:
         mode: create

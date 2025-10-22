@@ -22,7 +22,7 @@
 ---
 
 - name: Create GKE Cluster
-  hosts: gcp
+  hosts: GcpDeployHost
   gather_facts: false
   tasks:
     - name: Include role for cluster creation

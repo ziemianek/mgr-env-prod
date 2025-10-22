@@ -20,19 +20,13 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-variable "resource_group_name" {
-  description = "The name of the resource group."
-  type        = string
-  nullable    = false
-}
-
-variable "location" {
+variable "azure_location" {
   description = "The region where resources will be created."
   type        = string
   nullable    = false
 }
 
-variable "vpc_name" {
+variable "vnet_name" {
   description = "The name of the VPC network."
   type        = string
   nullable    = false
