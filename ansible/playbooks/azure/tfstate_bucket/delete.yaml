@@ -21,12 +21,12 @@
 ########################################################################################
 ---
 
-cloud_name: azure
-
-azure_location: europe-west
-
-tf_environment:
-  ARM_CLIENT_ID: "{{ vault_azure_client_id }}"
-  ARM_CLIENT_SECRET: "{{ vault_azure_client_secret }}"
-  ARM_TENANT_ID: "{{ vault_azure_tenant_id }}"
-  ARM_SUBSCRIPTION_ID: "{{ vault_azure_subscription_id }}"
+- name: Delete bucket for terraform state in GCP
+  hosts: gcp
+  gather_facts: false
+  tasks:
+    - name: Include role for tfstate bucket deletion
+      ansible.builtin.include_role:
+        name: gcp/tfstate_bucket
+      vars:
+        mode: delete

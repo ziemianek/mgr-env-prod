@@ -1,16 +1,18 @@
 # Deploy Boutique Application on GKE
 
-## Prerequisites
+## 0. Prerequisites
 Start with [Prerequisites](./Prerequisites.md).
 
 ## 1. Log in to [Google Cloud Platform](https://console.cloud.google.com/)
 
 ## 2. Create a new project and set it as the active one  
-Copy the **Project ID** – it will be required later in Terraform.  
 
 ![](./images/001_gke.png)  
-![](./images/002_gke.png)  
-![](./images/003_gke.png)  
+![](./images/002_gke.png)
+
+Copy the **Project ID** – it will be required later in Terraform.  
+
+![](./images/003_gke.png)
 
 ## 3. Install [gcloud CLI](https://cloud.google.com/sdk/docs/install) for your operating system
 
@@ -131,9 +133,4 @@ Run this command to verify if you have access to your GKE cluster
 kubectl get ns
 ```
 
-and the whole kubectl world is now open for you!
-
-# Grafana
-Ansible automation automatically forwards grafana to `localhost:3000`.
-
-You can log in using credentials defined in `ansible/inventories/group_vars/gcp/vault.yaml`
+You should see namespaces from your GKE cluster. The environment is now ready.

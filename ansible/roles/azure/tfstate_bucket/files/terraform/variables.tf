@@ -20,26 +20,14 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-variable "location_name" {
+variable "azure_location" {
   description = "The region where resources will be created."
   type        = string
   nullable    = false
 }
 
-variable "tfstate_resource_group_name" {
-  description = "Resource group name for tfstate storage account"
-  type        = string
-  nullable    = false
-}
-
 variable "tfstate_storage_account_name" {
-  description = "Storage account name for tfstate"
-  type        = string
-  nullable    = false
-}
-
-variable "tfstate_container_name" {
-  description = "Storage container name for tfstate"
+  description = "Storage Account name for terraform state"
   type        = string
   nullable    = false
 }
