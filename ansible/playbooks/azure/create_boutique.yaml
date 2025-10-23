@@ -21,16 +21,14 @@
 ########################################################################################
 ---
 
-cloud_name: azure
+# - name: Create network resources
+#   ansible.builtin.import_playbook: networking/create.yaml
 
-azure_location: westeurope
+- name: Create AKS Cluster
+  ansible.builtin.import_playbook: aks_cluster/create.yaml
 
-# AKS
-aks_subnet_name: "{{ app_name }}-aks-subnet"
+# - name: Create AKS Cluster Addons
+#   ansible.builtin.import_playbook: aks_cluster_addons/create.yaml
 
-# terraform
-tf_environment:
-  ARM_CLIENT_ID: "{{ vault_azure_client_id }}"
-  ARM_CLIENT_SECRET: "{{ vault_azure_client_secret }}"
-  ARM_TENANT_ID: "{{ vault_azure_tenant_id }}"
-  ARM_SUBSCRIPTION_ID: "{{ vault_azure_subscription_id }}"
+# - name: Create Boutique application
+#   ansible.builtin.import_playbook: application/create.yaml

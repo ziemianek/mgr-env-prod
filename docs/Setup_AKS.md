@@ -80,12 +80,11 @@ ansible-playbook -i inventories/prod.ini playbooks/azure/vnet/create.yaml -v --a
 ```
 
 ### 7.3. Set up application
-```
+```sh
 ansible-playbook -i inventories/prod.ini playbooks/azure/create_boutique.yaml -v --ask-vault-pass
 ```
 
 At the end, you will get a URL that you can use to access the application, for example: `https://34.118.2.252/`
-
 
 # Connect to AKS Cluster using local kubectl
 

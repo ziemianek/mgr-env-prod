@@ -20,177 +20,152 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-# Subnet for nodes + secondary ranges for Pods/Services
-resource "google_compute_subnetwork" "subnet" {
-  name          = var.subnet_name
-  ip_cidr_range = var.subnet_cidr
-  region        = var.region
-  network       = data.google_compute_network.vpc_network.id
+########################################################################################
+# NAT Gateway and public HTTPS ingress
+########################################################################################
 
-  secondary_ip_range {
-    range_name    = "pods"
-    ip_cidr_range = "10.20.0.0/16"
+resource "azurerm_subnet" "subnet" {
+  name                 = var.subnet_name
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = data.azurerm_virtual_network.vnet.name
+  address_prefixes     = [var.subnet_cidr]
+}
+
+# Public IP for NAT Gateway (egress)
+resource "azurerm_public_ip" "nat_gateway" {
+  name                = "${var.cluster_name}-nat-pip"
+  location            = var.azure_location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_nat_gateway" "nat_gateway" {
+  name                = "${var.cluster_name}-nat-gw"
+  location            = var.azure_location
+  resource_group_name = var.resource_group_name
+  sku_name            = "Standard"
+}
+
+resource "azurerm_nat_gateway_public_ip_association" "nat_gateway" {
+  nat_gateway_id       = azurerm_nat_gateway.nat_gateway.id
+  public_ip_address_id = azurerm_public_ip.nat_gateway.id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "nat_assoc" {
+  subnet_id      = azurerm_subnet.subnet.id
+  nat_gateway_id = azurerm_nat_gateway.nat_gateway.id
+}
+
+########################################################################################
+# Network Security Group (allow inbound HTTPS)
+########################################################################################
+
+resource "azurerm_network_security_group" "aks_nsg" {
+  name                = "${var.cluster_name}-nsg"
+  location            = var.azure_location
+  resource_group_name = var.resource_group_name
+
+  security_rule {
+    name                       = "allow_https_inbound"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+    description                = "Allow inbound HTTPS traffic to Ingress Controller"
   }
 
-  secondary_ip_range {
-    range_name    = "services"
-    ip_cidr_range = "10.30.0.0/20"
+  # (optional) if you want to allow HTTP too
+  # security_rule {
+  #   name                       = "allow_http_inbound"
+  #   priority                   = 110
+  #   direction                  = "Inbound"
+  #   access                     = "Allow"
+  #   protocol                   = "Tcp"
+  #   source_port_range          = "*"
+  #   destination_port_range     = "80"
+  #   source_address_prefix      = "*"
+  #   destination_address_prefix = "*"
+  #   description                = "Allow inbound HTTP traffic to Ingress Controller"
+  # }
+
+  security_rule {
+    name                       = "allow_egress_internet"
+    priority                   = 200
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "Internet"
+    description                = "Allow outbound Internet traffic"
   }
 }
 
-# Allow internal communication between nodes
-resource "google_compute_firewall" "allow_internal_traffic" {
-  name    = "allow-internal-traffic"
-  network = data.google_compute_network.vpc_network.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["0-65535"]
-  }
-
-  source_ranges = [var.subnet_cidr]
+# Attach NSG to subnet
+resource "azurerm_subnet_network_security_group_association" "aks_nsg_assoc" {
+  subnet_id                 = azurerm_subnet.subnet.id
+  network_security_group_id = azurerm_network_security_group.aks_nsg.id
 }
 
-# Allow HTTPS ingress (for frontend / LB)
-resource "google_compute_firewall" "allow_external_ingress" {
-  name    = "allow-external-ingress"
-  network = data.google_compute_network.vpc_network.name
+########################################################################################
+# AKS Cluster
+########################################################################################
 
-  allow {
-    protocol = "tcp"
-    ports    = ["443"]
-  }
+resource "azurerm_kubernetes_cluster" "primary" {
+  depends_on = [
+    azurerm_subnet_nat_gateway_association.nat_assoc,
+    azurerm_subnet_network_security_group_association.aks_nsg_assoc
+  ]
 
-  source_ranges = ["0.0.0.0/0"]
-}
+  name                = var.cluster_name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  dns_prefix          = "${var.cluster_name}-dns"
 
-resource "google_compute_router" "nat_router" {
-  name    = "${var.cluster_name}-nat-router"
-  region  = var.region
-  network = data.google_compute_network.vpc_network.id
-}
-
-resource "google_compute_router_nat" "nat_config" {
-  name   = "${var.cluster_name}-nat"
-  router = google_compute_router.nat_router.name
-  region = google_compute_router.nat_router.region
-
-  nat_ip_allocate_option = "AUTO_ONLY"
-
-  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
-
-  subnetwork {
-    name                    = google_compute_subnetwork.subnet.name
-    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
-  }
-
-  log_config {
-    enable = true
-    filter = "ERRORS_ONLY"
-  }
-}
-
-# GKE cluster (VPC-native, private nodes)
-resource "google_container_cluster" "primary" {
-  name                     = var.cluster_name
-  location                 = var.region
-  remove_default_node_pool = true
-  initial_node_count       = 1
-  deletion_protection      = false
-
-  networking_mode = "VPC_NATIVE"
-  network         = data.google_compute_network.vpc_network.name
-  subnetwork      = google_compute_subnetwork.subnet.name
-
-  # Keep single-zone for cost/reproducibility
-  node_locations = ["${var.region}-a"]
-
-  addons_config {
-    http_load_balancing {
-      disabled = false
-    }
-    horizontal_pod_autoscaling {
-      disabled = false
-    }
-  }
-
-  ip_allocation_policy {
-    cluster_secondary_range_name  = "pods"     # must match subnet
-    services_secondary_range_name = "services" # must match subnet
-  }
-
-  private_cluster_config {
-    enable_private_nodes    = true
-    enable_private_endpoint = false
-    master_ipv4_cidr_block  = "192.168.0.0/28"
-  }
-}
-
-# Node pool
-resource "google_container_node_pool" "primary_nodes" {
-  name     = "primary-node-pool"
-  cluster  = google_container_cluster.primary.name
-  location = var.region
-
-  node_locations = ["${var.region}-a"]
-
-  initial_node_count = 1
-
-  autoscaling {
-    total_min_node_count = 1
-    total_max_node_count = 2
-  }
-
-  management {
-    auto_upgrade = true
-    auto_repair  = true
-  }
-
-  node_config {
-    preemptible  = false # on-demand for fairness baseline
-    machine_type = "e2-standard-4"
-    disk_size_gb = 50
-    disk_type    = "pd-balanced"
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform"
-    ]
-
-    labels = {
+  default_node_pool {
+    name                 = "primarynp"
+    vm_size              = "Standard_D4_v3"
+    node_count           = 1
+    min_count            = 1
+    max_count            = 2
+    auto_scaling_enabled = true
+    vnet_subnet_id       = azurerm_subnet.subnet.id
+    node_labels = {
       role = var.application_node_label
     }
   }
+
+  network_profile {
+    network_plugin    = "azure"
+    outbound_type     = "userDefinedRouting"
+    load_balancer_sku = "standard"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
 
-resource "google_container_node_pool" "monitoring_nodes" {
-  name     = "monitoring-node-pool"
-  cluster  = google_container_cluster.primary.name
-  location = var.region
+########################################################################################
+# Additional Node Pool for Monitoring
+########################################################################################
 
-  node_locations = ["${var.region}-a"]
-
-  initial_node_count = 1
-
-  autoscaling {
-    total_min_node_count = 1
-    total_max_node_count = 1
-  }
-
-  management {
-    auto_upgrade = true
-    auto_repair  = true
-  }
-
-  node_config {
-    preemptible  = false
-    machine_type = "e2-standard-2"
-    disk_size_gb = 50
-    disk_type    = "pd-balanced"
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform"
-    ]
-
-    labels = {
-      role = var.monitoring_node_label
-    }
+resource "azurerm_kubernetes_cluster_node_pool" "monitoring_nodes" {
+  name                  = "monitoringnp"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.primary.id
+  vm_size               = "Standard_D2_v3"
+  node_count            = 1
+  min_count             = 1
+  max_count             = 1
+  auto_scaling_enabled  = false
+  vnet_subnet_id        = azurerm_subnet.subnet.id
+  node_labels = {
+    role = var.monitoring_node_label
   }
 }

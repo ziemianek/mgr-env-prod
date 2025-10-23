@@ -20,14 +20,10 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-variable "azure_location" {
-  description = "The region where resources will be created."
-  type        = string
-  nullable    = false
+data "google_client_config" "default" {
 }
 
-variable "vnet_name" {
-  description = "The name of the VPC network."
-  type        = string
-  nullable    = false
+data "google_container_cluster" "gke_cluster" {
+  name     = var.cluster_name
+  location = var.region
 }

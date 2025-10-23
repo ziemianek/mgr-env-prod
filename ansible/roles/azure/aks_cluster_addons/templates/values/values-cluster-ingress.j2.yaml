@@ -19,6 +19,8 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
+---
 
-azure_location = "{{ azure_location }}"
-vnet_name      = "{{ vpc_name }}"
+virtualService:
+  destination:
+    host: "frontend.{{ application_namespace }}.svc.cluster.local"

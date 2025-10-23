@@ -20,14 +20,33 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-resource "azurerm_resource_group" "vnet" {
-  name     = "vnet"
-  location = var.azure_location
+
+variable "app_name" {
+  description = "Name of the application."
+  type        = string
+  nullable    = false
 }
 
-resource "azurerm_virtual_network" "vnet" {
-  name                = var.vnet_name
-  address_space       = ["10.0.0.0/16"]
-  location            = var.azure_location
-  resource_group_name = azurerm_resource_group.vnet.name
+variable "azure_location" {
+  description = "The region where resources will be created."
+  type        = string
+  nullable    = false
+}
+
+variable "resource_group_name" {
+  description = "Resource group name for application."
+  type        = string
+  nullable    = false
+}
+
+variable "vnet_name" {
+  description = "The name of the VPC network."
+  type        = string
+  nullable    = false
+}
+
+variable "subnet_name" {
+  description = "The name of the subnet"
+  type        = string
+  nullable    = false
 }

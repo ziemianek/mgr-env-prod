@@ -21,16 +21,12 @@
 ########################################################################################
 ---
 
-cloud_name: azure
-
-azure_location: westeurope
-
-# AKS
-aks_subnet_name: "{{ app_name }}-aks-subnet"
-
-# terraform
-tf_environment:
-  ARM_CLIENT_ID: "{{ vault_azure_client_id }}"
-  ARM_CLIENT_SECRET: "{{ vault_azure_client_secret }}"
-  ARM_TENANT_ID: "{{ vault_azure_tenant_id }}"
-  ARM_SUBSCRIPTION_ID: "{{ vault_azure_subscription_id }}"
+- name: Delete AKS Cluster
+  hosts: AzureDeployHost
+  gather_facts: false
+  tasks:
+    - name: Include role for cluster deletion
+      ansible.builtin.include_role:
+        name: "azure/aks_cluster"
+      vars:
+        mode: delete

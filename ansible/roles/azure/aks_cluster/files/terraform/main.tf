@@ -20,51 +20,41 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-resource "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  virtual_network_name = data.azurerm_virtual_network.vnet.name
-  address_prefixes     = [var.subnet_cidr]
+########################################################################################
+# AKS Cluster
+########################################################################################
+
+resource "azurerm_resource_group" "cluster" {
+  name     = var.resource_group_name
+  location = var.azure_location
 }
 
-resource "azurerm_public_ip" "nat_pip" {
-  name                = "${var.cluster_name}-nat-pip"
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-
-resource "azurerm_nat_gateway" "nat_gateway" {
-  name                  = "${var.cluster_name}-nat-gateway"
-  location              = data.azurerm_resource_group.rg.location
-  resource_group_name   = data.azurerm_resource_group.rg.name
-  sku_name              = "Standard"
-  public_ip_address_ids = [azurerm_public_ip.nat_pip.id]
-}
-
-resource "azurerm_subnet_nat_gateway_association" "nat_assoc" {
-  subnet_id      = azurerm_subnet.subnet.id
-  nat_gateway_id = azurerm_nat_gateway.nat_gateway.id
-}
-
-resource "azurerm_kubernetes_cluster" "primary" {
+resource "azurerm_kubernetes_cluster" "cluster" {
   name                = var.cluster_name
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.cluster.location
+  resource_group_name = azurerm_resource_group.cluster.name
   dns_prefix          = "${var.cluster_name}-dns"
+  kubernetes_version  = "1.33"
 
   default_node_pool {
-    name           = "default"
-    node_count     = 1
-    vm_size        = "Standard_D2_v2"
-    vnet_subnet_id = azurerm_subnet.subnet.id
+    name                 = "primarynp"
+    vm_size              = "Standard_D4_v3"
+    node_count           = 1
+    min_count            = 1
+    max_count            = 2
+    auto_scaling_enabled = true
+    vnet_subnet_id       = data.azurerm_subnet.aks.id
+    node_labels = {
+      role = var.application_node_label
+    }
   }
 
   network_profile {
-    network_plugin = "azure"
-    outbound_type  = "userDefinedRouting"
+    network_plugin    = "azure"
+    outbound_type     = "userAssignedNATGateway"
     load_balancer_sku = "standard"
+    service_cidr      = "172.16.0.0/16"
+    dns_service_ip    = "172.16.0.10"
   }
 
   identity {
@@ -72,31 +62,17 @@ resource "azurerm_kubernetes_cluster" "primary" {
   }
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "primary_nodes" {
-  name                  = "appnodepool"
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.primary.id
-  vm_size               = "Standard_D4_v3" # Equivalent to e2-standard-4
-  node_count            = 1
-  min_count             = 1
-  max_count             = 2
-  enable_auto_scaling   = true
-  vnet_subnet_id        = azurerm_subnet.subnet.id
-
-  node_labels = {
-    role = var.application_node_label
-  }
-}
+########################################################################################
+# Additional Node Pool for Monitoring
+########################################################################################
 
 resource "azurerm_kubernetes_cluster_node_pool" "monitoring_nodes" {
-  name                  = "monnodepool"
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.primary.id
-  vm_size               = "Standard_D2_v3" # Equivalent to e2-standard-2
+  name                  = "monitoringnp"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.cluster.id
+  vm_size               = "Standard_D2_v3"
   node_count            = 1
-  min_count             = 1
-  max_count             = 1
-  enable_auto_scaling   = true
-  vnet_subnet_id        = azurerm_subnet.subnet.id
-
+  auto_scaling_enabled  = false
+  vnet_subnet_id        = data.azurerm_subnet.aks.id
   node_labels = {
     role = var.monitoring_node_label
   }

@@ -20,51 +20,65 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-
-variable "app_name" {
-  description = "Name of the application"
-  type        = string
-  nullable    = false
-}
-
-variable "resource_group_name" {
-  description = "Azure resource group name"
-  type        = string
-  nullable    = false
-}
-
-variable "azure_location" {
-  description = "Azure region"
-  type        = string
-  nullable    = false
-}
-
-variable "vnet_name" {
-  description = "VNet name"
-  type        = string
-  nullable    = false
-}
-
-variable "subnet_name" {
-  description = "Subnet name"
-  type        = string
-  nullable    = false
-}
-
 variable "cluster_name" {
   description = "AKS cluster name"
   type        = string
   nullable    = false
 }
 
-variable "monitoring_node_label" {
-  description = "Label for node where monitoring components live"
+# Addons
+variable "cert_manager" {
+  description = "Path to the cert-manager Helm chart"
   type        = string
   nullable    = false
 }
 
-variable "application_node_label" {
-  description = "Label for node where application live"
+variable "istiod" {
+  description = "Path to the istiod Helm chart"
+  type        = string
+  nullable    = false
+}
+
+variable "istio_base" {
+  description = "Path to the istio-base Helm chart"
+  type        = string
+  nullable    = false
+}
+
+variable "istio_gateway" {
+  description = "Path to the istio-gateway Helm chart"
+  type        = string
+  nullable    = false
+}
+
+# Ingress
+variable "cluster_ingress" {
+  description = "Path to the cluster-ingress Helm chart"
+  type        = string
+  nullable    = false
+}
+
+variable "values_cluster_ingress" {
+  description = "Path to values for the cluster-ingress Helm chart"
+  type        = string
+  nullable    = false
+}
+
+# Monitoring
+variable "kube_prometheus_stack" {
+  description = "Path to the kube-prometheus-stack Helm chart"
+  type        = string
+  nullable    = false
+}
+
+variable "values_kube_prometheus_stack" {
+  description = "Path to values for the kube-prometheus-stack Helm chart"
+  type        = string
+  nullable    = false
+}
+
+variable "monitoring_namespace" {
+  description = "Namespace where monitoring components live"
   type        = string
   nullable    = false
 }

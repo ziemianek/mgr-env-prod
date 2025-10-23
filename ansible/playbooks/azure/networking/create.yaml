@@ -21,12 +21,12 @@
 ########################################################################################
 ---
 
-- name: Delete VNET in Azure
+- name: Create Networking Resources in Azure
   hosts: AzureDeployHost
   gather_facts: false
   tasks:
-    - name: Include role for VNET deletion
+    - name: Include role for Networking Resources creation
       ansible.builtin.include_role:
-        name: azure/vnet
+        name: azure/networking
       vars:
-        mode: delete
+        mode: create
