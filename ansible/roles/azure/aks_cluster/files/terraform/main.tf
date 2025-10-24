@@ -46,6 +46,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     max_count            = 2
     auto_scaling_enabled = true
     vnet_subnet_id       = data.azurerm_subnet.aks.id
+    max_pods             = 40
 
     node_labels = {
       role = var.application_node_label
@@ -53,7 +54,6 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   }
 
   network_profile {
-    # outbound_type     = "userAssignedNATGateway"
     network_plugin    = "azure"
     outbound_type     = "loadBalancer"
     load_balancer_sku = "standard"
