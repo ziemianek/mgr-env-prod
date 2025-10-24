@@ -19,16 +19,27 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
----
 
-# - name: Create network resources
-#   ansible.builtin.import_playbook: networking/create.yaml
+variable "app_name" {
+  description = "Application name"
+  type        = string
+  nullable    = false
+}
 
-# - name: Create AKS Cluster
-#   ansible.builtin.import_playbook: aks_cluster/create.yaml
+variable "cluster_name" {
+  description = "GKE cluster name"
+  type        = string
+  nullable    = false
+}
 
-# - name: Create AKS Cluster Addons
-#   ansible.builtin.import_playbook: aks_cluster_addons/create.yaml
+variable "application_helm_chart_path" {
+  description = "Path boutique application Helm chart"
+  type        = string
+  nullable    = false
+}
 
-- name: Create Boutique application
-  ansible.builtin.import_playbook: application/create.yaml
+variable "application_namespace" {
+  description = "Namespace where application pods live"
+  type        = string
+  nullable    = false
+}

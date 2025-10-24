@@ -21,14 +21,10 @@
 ########################################################################################
 ---
 
-# - name: Create network resources
-#   ansible.builtin.import_playbook: networking/create.yaml
+service_name: application
 
-# - name: Create AKS Cluster
-#   ansible.builtin.import_playbook: aks_cluster/create.yaml
+helm_charts_dir: "{{ role_path }}/../../../helm"
 
-# - name: Create AKS Cluster Addons
-#   ansible.builtin.import_playbook: aks_cluster_addons/create.yaml
-
-- name: Create Boutique application
-  ansible.builtin.import_playbook: application/create.yaml
+helm_charts:
+  application:
+    path: "{{ helm_charts_dir }}/boutique"

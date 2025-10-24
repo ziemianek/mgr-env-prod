@@ -21,11 +21,11 @@
 ########################################################################################
 ---
 
-# - name: Delete Boutique Application
-#   ansible.builtin.import_playbook: application/delete.yaml
+- name: Delete Boutique Application
+  ansible.builtin.import_playbook: application/delete.yaml
 
-# - name: Delete AKS Cluster Addons
-#   ansible.builtin.import_playbook: aks_cluster_addons/delete.yaml
+- name: Delete AKS Cluster Addons
+  ansible.builtin.import_playbook: aks_cluster_addons/delete.yaml
 
 - name: Delete AKS Cluster
   ansible.builtin.import_playbook: aks_cluster/delete.yaml

@@ -21,14 +21,12 @@
 ########################################################################################
 ---
 
-# - name: Create network resources
-#   ansible.builtin.import_playbook: networking/create.yaml
-
-# - name: Create AKS Cluster
-#   ansible.builtin.import_playbook: aks_cluster/create.yaml
-
-# - name: Create AKS Cluster Addons
-#   ansible.builtin.import_playbook: aks_cluster_addons/create.yaml
-
-- name: Create Boutique application
-  ansible.builtin.import_playbook: application/create.yaml
+- name: Delete boutique application
+  hosts: AzureDeployHost
+  gather_facts: false
+  tasks:
+    - name: Include role for app deletion
+      ansible.builtin.include_role:
+        name: "azure/application"
+      vars:
+        mode: delete

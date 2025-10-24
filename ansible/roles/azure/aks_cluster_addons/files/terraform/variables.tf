@@ -20,6 +20,12 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
+variable "app_name" {
+  description = "Application  name"
+  type        = string
+  nullable    = false
+}
+
 variable "cluster_name" {
   description = "AKS cluster name"
   type        = string

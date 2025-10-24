@@ -19,16 +19,9 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
----
 
-# - name: Create network resources
-#   ansible.builtin.import_playbook: networking/create.yaml
+app_name     = "{{ app_name }}"
+cluster_name = "{{ cluster_name }}"
 
-# - name: Create AKS Cluster
-#   ansible.builtin.import_playbook: aks_cluster/create.yaml
-
-# - name: Create AKS Cluster Addons
-#   ansible.builtin.import_playbook: aks_cluster_addons/create.yaml
-
-- name: Create Boutique application
-  ansible.builtin.import_playbook: application/create.yaml
+application_helm_chart_path = "{{ helm_charts.application.path }}"
+application_namespace       = "{{ application_namespace }}"

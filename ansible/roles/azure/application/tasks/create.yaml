@@ -21,14 +21,20 @@
 ########################################################################################
 ---
 
-# - name: Create network resources
-#   ansible.builtin.import_playbook: networking/create.yaml
+- name: "{{ service_name }} | Run Terraform Init"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: init
 
-# - name: Create AKS Cluster
-#   ansible.builtin.import_playbook: aks_cluster/create.yaml
+- name: "{{ service_name }} | Run Terraform Apply"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: apply
 
-# - name: Create AKS Cluster Addons
-#   ansible.builtin.import_playbook: aks_cluster_addons/create.yaml
+- name: "{{ service_name }} | Configure HPA"
+  ansible.builtin.include_tasks: apply_hpa.yaml
 
-- name: Create Boutique application
-  ansible.builtin.import_playbook: application/create.yaml
+- name: "{{ service_name }} | Get application URL"
+  ansible.builtin.include_tasks: get_application_url.yaml
