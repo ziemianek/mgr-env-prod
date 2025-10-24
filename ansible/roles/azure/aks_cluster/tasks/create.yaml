@@ -21,17 +21,17 @@
 ########################################################################################
 ---
 
-# - name: "{{ service_name }} | Run Terraform Init"
-#   ansible.builtin.include_role:
-#     name: terraform
-#   vars:
-#     operation: init
+- name: "{{ service_name }} | Run Terraform Init"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: init
 
-# - name: "{{ service_name }} | Run Terraform Apply"
-#   ansible.builtin.include_role:
-#     name: terraform
-#   vars:
-#     operation: apply
+- name: "{{ service_name }} | Run Terraform Apply"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: apply
 
 - name: "{{ service_name }} | Configure monitoring node pool taint"
   ansible.builtin.include_tasks: configure_monitoring_nodepool_taint.yaml

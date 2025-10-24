@@ -34,7 +34,9 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   location            = azurerm_resource_group.cluster.location
   resource_group_name = azurerm_resource_group.cluster.name
   dns_prefix          = "${var.cluster_name}-dns"
-  kubernetes_version  = "1.33"
+  kubernetes_version  = "1.33.3"
+
+  role_based_access_control_enabled = true
 
   default_node_pool {
     name                 = "primarynp"
@@ -44,14 +46,16 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     max_count            = 2
     auto_scaling_enabled = true
     vnet_subnet_id       = data.azurerm_subnet.aks.id
+
     node_labels = {
       role = var.application_node_label
     }
   }
 
   network_profile {
+    # outbound_type     = "userAssignedNATGateway"
     network_plugin    = "azure"
-    outbound_type     = "userAssignedNATGateway"
+    outbound_type     = "loadBalancer"
     load_balancer_sku = "standard"
     service_cidr      = "172.16.0.0/16"
     dns_service_ip    = "172.16.0.10"

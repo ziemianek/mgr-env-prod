@@ -19,6 +19,9 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
+########################################################################################
+# Networking for AKS
+########################################################################################
 
 resource "azurerm_resource_group" "networking" {
   name     = var.resource_group_name
@@ -32,10 +35,6 @@ resource "azurerm_virtual_network" "vnet" {
   address_space       = ["10.0.0.0/16"]
 }
 
-########################################################################################
-# AKS Networking
-########################################################################################
-
 resource "azurerm_subnet" "aks" {
   name                 = var.subnet_name
   resource_group_name  = azurerm_resource_group.networking.name
@@ -43,31 +42,29 @@ resource "azurerm_subnet" "aks" {
   address_prefixes     = ["10.0.0.0/20"]
 }
 
-resource "azurerm_nat_gateway" "nat_gateway" {
-  name                = "${var.app_name}-aks-nat-gw"
-  location            = var.azure_location
-  resource_group_name = azurerm_resource_group.networking.name
-  sku_name            = "Standard"
-}
+# resource "azurerm_nat_gateway" "nat_gateway" {
+#   name                = "${var.app_name}-aks-nat-gw"
+#   location            = var.azure_location
+#   resource_group_name = azurerm_resource_group.networking.name
+#   sku_name            = "Standard"
+# }
 
-# Public IP for NAT Gateway (egress)
-resource "azurerm_public_ip" "nat_gateway" {
-  name                = "${var.app_name}-aks-nat-pip"
-  location            = var.azure_location
-  resource_group_name = azurerm_resource_group.networking.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
+# resource "azurerm_public_ip" "nat_gateway" {
+#   name                = "${var.app_name}-aks-nat-pip"
+#   location            = var.azure_location
+#   resource_group_name = azurerm_resource_group.networking.name
+#   allocation_method   = "Static"
+#   sku                 = "Standard"
+# }
 
-resource "azurerm_nat_gateway_public_ip_association" "nat_gateway" {
-  nat_gateway_id       = azurerm_nat_gateway.nat_gateway.id
-  public_ip_address_id = azurerm_public_ip.nat_gateway.id
-}
+# resource "azurerm_nat_gateway_public_ip_association" "nat_gateway" {
+#   nat_gateway_id       = azurerm_nat_gateway.nat_gateway.id
+#   public_ip_address_id = azurerm_public_ip.nat_gateway.id
+# }
 
-resource "azurerm_subnet_nat_gateway_association" "nat_assoc" {
-  subnet_id      = azurerm_subnet.aks.id
-  nat_gateway_id = azurerm_nat_gateway.nat_gateway.id
-}
+########################################################################################
+# NSG
+########################################################################################
 
 resource "azurerm_network_security_group" "aks_nsg" {
   name                = "${var.app_name}-aks-network-sg"
@@ -82,21 +79,34 @@ resource "azurerm_network_security_group" "aks_nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = "*"
+    source_address_prefix      = "0.0.0.0/0"
     destination_address_prefix = "*"
-    description                = "Allow inbound HTTPS traffic to Ingress Controller"
+    description                = "Allow inbound HTTPS traffic from Internet to Ingress Controller"
+  }
+
+  security_rule {
+    name                       = "allow_lb_probe"
+    priority                   = 110
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "15021"
+    source_address_prefix      = "168.63.129.16/32"
+    destination_address_prefix = "*"
+    description                = "Allow inbound health probe traffic from Azure LB"
   }
 
   security_rule {
     name                       = "allow_egress_internet"
-    priority                   = 200
+    priority                   = 120
     direction                  = "Outbound"
     access                     = "Allow"
     protocol                   = "*"
     source_port_range          = "*"
     destination_port_range     = "*"
     source_address_prefix      = "*"
-    destination_address_prefix = "Internet"
+    destination_address_prefix = "*"
     description                = "Allow outbound Internet traffic"
   }
 }
