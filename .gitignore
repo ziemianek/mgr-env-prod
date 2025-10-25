@@ -20,8 +20,10 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-**/.terraform/*
-**/terraform.tfstate.d/*
+**/.terraform/
+# Terraform state files
+**/terraform.tfstate.d/
+
 **/.vscode/*
 **/.DS_Store
 
