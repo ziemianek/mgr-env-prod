@@ -20,3 +20,12 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 ---
+
+vault_azure_client_id: "appId"
+vault_azure_client_secret: "password"
+vault_azure_tenant_id: "tenant"
+vault_azure_subscription_id: "subscription-id"
+
+# Replace with your own credentials, or leave as it is...
+vault_grafana_admin_username: admin
+vault_grafana_admin_password: password

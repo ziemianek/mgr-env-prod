@@ -20,11 +20,11 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-resource_group_name    = "{{ azure_resource_group }}"
-location               = "{{ azure_region }}"
-vnet_name              = "{{ vpc_name }}"
+app_name               = "{{ app_name }}"
+azure_location         = "{{ azure_location }}"
 cluster_name           = "{{ cluster_name }}"
+vnet_name              = "{{ vpc_name }}"
 subnet_name            = "{{ aks_subnet_name }}"
-subnet_cidr            = "{{ aks_subnet_cidr }}"
+resource_group_name    = "{{ resource_group_name }}"
 monitoring_node_label  = "{{ monitoring_namespace }}"
 application_node_label = "{{ application_namespace }}"
