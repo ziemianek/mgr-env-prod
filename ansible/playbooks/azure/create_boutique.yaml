@@ -21,11 +21,11 @@
 ########################################################################################
 ---
 
-- name: Create network resources
-  ansible.builtin.import_playbook: networking/create.yaml
+# - name: Create network resources
+#   ansible.builtin.import_playbook: networking/create.yaml
 
-- name: Create AKS Cluster
-  ansible.builtin.import_playbook: aks_cluster/create.yaml
+# - name: Create AKS Cluster
+#   ansible.builtin.import_playbook: aks_cluster/create.yaml
 
 - name: Create AKS Cluster Addons
   ansible.builtin.import_playbook: aks_cluster_addons/create.yaml

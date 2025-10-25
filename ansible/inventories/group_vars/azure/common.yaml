@@ -23,7 +23,7 @@
 
 cloud_name: azure
 
-azure_location: westeurope
+azure_location: polandcentral
 
 # AKS
 aks_subnet_name: "{{ app_name }}-aks-subnet"

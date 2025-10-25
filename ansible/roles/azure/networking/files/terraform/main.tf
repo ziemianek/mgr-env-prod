@@ -42,26 +42,6 @@ resource "azurerm_subnet" "aks" {
   address_prefixes     = ["10.0.0.0/20"]
 }
 
-# resource "azurerm_nat_gateway" "nat_gateway" {
-#   name                = "${var.app_name}-aks-nat-gw"
-#   location            = var.azure_location
-#   resource_group_name = azurerm_resource_group.networking.name
-#   sku_name            = "Standard"
-# }
-
-# resource "azurerm_public_ip" "nat_gateway" {
-#   name                = "${var.app_name}-aks-nat-pip"
-#   location            = var.azure_location
-#   resource_group_name = azurerm_resource_group.networking.name
-#   allocation_method   = "Static"
-#   sku                 = "Standard"
-# }
-
-# resource "azurerm_nat_gateway_public_ip_association" "nat_gateway" {
-#   nat_gateway_id       = azurerm_nat_gateway.nat_gateway.id
-#   public_ip_address_id = azurerm_public_ip.nat_gateway.id
-# }
-
 ########################################################################################
 # NSG
 ########################################################################################

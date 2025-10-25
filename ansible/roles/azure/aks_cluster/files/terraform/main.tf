@@ -46,7 +46,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     max_count            = 2
     auto_scaling_enabled = true
     vnet_subnet_id       = data.azurerm_subnet.aks.id
-    max_pods             = 40
+    max_pods             = 110
 
     node_labels = {
       role = var.application_node_label
@@ -54,11 +54,14 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   }
 
   network_profile {
-    network_plugin    = "azure"
-    outbound_type     = "loadBalancer"
-    load_balancer_sku = "standard"
-    service_cidr      = "172.16.0.0/16"
-    dns_service_ip    = "172.16.0.10"
+    network_plugin      = "azure"
+    network_plugin_mode = "overlay"
+    network_policy      = "cilium"
+    network_data_plane  = "cilium"
+    outbound_type       = "loadBalancer"
+    load_balancer_sku   = "standard"
+    service_cidr        = "172.16.0.0/16"
+    dns_service_ip      = "172.16.0.10"
   }
 
   identity {
