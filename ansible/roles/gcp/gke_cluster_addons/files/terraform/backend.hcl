@@ -20,5 +20,5 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-bucket = "terraform-state-uycmnjq4nr"
+bucket  = "terraform-state-uycmnjq4nr"
 prefix = "boutique/gke_cluster_addons"

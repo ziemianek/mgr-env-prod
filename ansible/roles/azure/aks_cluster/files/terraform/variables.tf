@@ -20,20 +20,13 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-
-variable "app_name" {
-  description = "Name of the application"
-  type        = string
-  nullable    = false
-}
-
 variable "resource_group_name" {
   description = "Azure resource group name"
   type        = string
   nullable    = false
 }
 
-variable "azure_location" {
+variable "location" {
   description = "Azure region"
   type        = string
   nullable    = false
@@ -47,6 +40,12 @@ variable "vnet_name" {
 
 variable "subnet_name" {
   description = "Subnet name"
+  type        = string
+  nullable    = false
+}
+
+variable "subnet_cidr" {
+  description = "Subnet CIDR range"
   type        = string
   nullable    = false
 }

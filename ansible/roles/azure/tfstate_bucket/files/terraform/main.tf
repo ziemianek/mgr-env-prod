@@ -20,21 +20,21 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-resource "azurerm_resource_group" "tfstate" {
-  name     = "tfstate"
-  location = var.azure_location
+resource "azurerm_resource_group" "tfstate_rg" {
+  name     = var.tfstate_resource_group_name
+  location = var.location_name
 }
 
-resource "azurerm_storage_account" "tfstate" {
+resource "azurerm_storage_account" "tfstate_sa" {
   name                     = var.tfstate_storage_account_name
-  resource_group_name      = azurerm_resource_group.tfstate.name
-  location                 = var.azure_location
+  resource_group_name      = azurerm_resource_group.tfstate_rg.name
+  location                 = azurerm_resource_group.tfstate_rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 
-resource "azurerm_storage_container" "tfstate" {
-  name                  = "tfstate"
-  storage_account_id    = azurerm_storage_account.tfstate.id
+resource "azurerm_storage_container" "tfstate_sc" {
+  name                  = var.tfstate_container_name
+  storage_account_id    = azurerm_storage_account.tfstate_sa.id
   container_access_type = "private"
 }

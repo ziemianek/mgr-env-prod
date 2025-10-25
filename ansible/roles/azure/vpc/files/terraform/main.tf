@@ -20,10 +20,9 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-**/.terraform/*
-**/.vscode/*
-**/.DS_Store
-
-data/
-data_backup/
-results/
+resource "azurerm_virtual_network" "vpc_network" {
+  name                = var.vpc_name
+  address_space       = ["10.0.0.0/16"]
+  location            = var.location
+  resource_group_name = var.resource_group_name
+}

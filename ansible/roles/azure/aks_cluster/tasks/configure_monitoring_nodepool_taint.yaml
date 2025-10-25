@@ -8,30 +8,15 @@
   block:
     - name: "{{ service_name }} | Get kubeconfig for the '{{ cluster_name }}' cluster"
       ansible.builtin.command: >
-        az aks get-credentials 
-        --resource-group {{ resource_group_name }} 
-        --name {{ cluster_name }} 
-        --overwrite-existing
+        az aks get-credentials --resource-group {{ azure_resource_group }} --name {{ cluster_name }} --overwrite-existing
       changed_when: true
-
-    - name: Wait until monitoring node becomes available
-      ansible.builtin.command:
-        cmd: >
-          kubectl get nodes
-          -l role={{ monitoring_namespace }}
-          -o jsonpath='{.items[0].status.conditions[?(@.type=="Ready")].status}'
-      register: monitoring_node_status
-      until: monitoring_node_status.stdout == "True"
-      retries: 15
-      delay: 5
-      changed_when: false
 
     # TODO: refactor this
     - name: Get monitoring node name
       ansible.builtin.command:
         cmd: >
           kubectl get nodes 
-          -l role="{{ monitoring_namespace }}" 
+          -l agentpool="{{ monitoring_node_pool_name }}" 
           -o custom-columns=NAME:.metadata.name 
           --no-headers
       register: monitoring_node_name
@@ -40,14 +25,9 @@
       ansible.builtin.debug:
         msg: "Monitoring node name: {{ monitoring_node_name.stdout }}"
 
-    - name: Apply taint to all monitoring nodes
+    - name: Set taint for monitoring nodes
       ansible.builtin.command:
-        cmd: >
-          kubectl taint nodes {{ node }} dedicated="{{ monitoring_namespace }}":NoSchedule --overwrite
-      loop: "{{ monitoring_node_name.stdout_lines }}"
-      loop_control:
-        loop_var: node
-      changed_when: true
+        cmd: kubectl taint nodes "{{ monitoring_node_name.stdout }}" dedicated="{{ monitoring_namespace }}":NoSchedule
 
   always:
     - name: "{{ service_name }} | Clean kubeconfig"

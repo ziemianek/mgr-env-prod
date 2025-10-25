@@ -19,11 +19,10 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
+---
 
-**/.terraform/*
-**/.vscode/*
-**/.DS_Store
-
-data/
-data_backup/
-results/
+- name: "{{ service_name }} | Run Terraform Destroy"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: destroy

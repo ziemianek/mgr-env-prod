@@ -20,10 +20,6 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-**/.terraform/*
-**/.vscode/*
-**/.DS_Store
-
-data/
-data_backup/
-results/
+resource_group_name = "{{ azure_resource_group }}"
+location            = "{{ azure_region }}"
+vpc_name            = "{{ vpc_name }}"

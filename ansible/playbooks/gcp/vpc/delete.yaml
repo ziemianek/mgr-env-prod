@@ -22,7 +22,7 @@
 ---
 
 - name: Delete VPC in GCP
-  hosts: GcpDeployHost
+  hosts: gcp
   gather_facts: false
   tasks:
     - name: Include role for VPC deletion

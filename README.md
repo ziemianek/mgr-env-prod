@@ -20,9 +20,9 @@ The goal of this project is to **compare managed Kubernetes services** in terms 
 # How to
 [How to setup GKE Cluster](./docs/Setup_GKE.md)
 
-[How to setup AKS Cluster](./docs/Setup_AKS.md)
+[How to setup AKS Cluster](./docs/Setup_GKE.md)
 
-[How to setup EKS Cluster](./docs/Setup_EKS.md)
+[How to setup EKS Cluster](./docs/Setup_GKE.md)
 
 [How to perform testing](./docs/Testing.md)
 

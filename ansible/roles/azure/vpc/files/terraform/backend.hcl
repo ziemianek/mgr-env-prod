@@ -20,10 +20,7 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-**/.terraform/*
-**/.vscode/*
-**/.DS_Store
-
-data/
-data_backup/
-results/
+resource_group_name  = "{{ tfstate_resource_group_name }}"
+storage_account_name = "{{ tfstate_storage_account_name }}"
+container_name       = "{{ tfstate_container_name }}"
+key                  = "boutique/vpc"

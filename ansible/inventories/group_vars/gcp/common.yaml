@@ -27,10 +27,10 @@ cloud_name: gcp
 gcp_region: europe-central2 # Warsaw
 gcp_project_id: "{{ vault_gcp_project_id }}"
 
-# GKE
-gke_subnet_cidr: 10.10.0.0/20
-gke_subnet_name: "{{ app_name }}-gke-subnet"
-
 # Terraform
 tf_environment:
   GOOGLE_CREDENTIALS: "{{ vault_gcp_credentials }}"
+
+# GKE
+gke_subnet_cidr: 10.10.0.0/20
+gke_subnet_name: "{{ app_name }}-gke-subnet"

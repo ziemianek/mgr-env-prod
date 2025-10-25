@@ -19,11 +19,16 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
+---
 
-**/.terraform/*
-**/.vscode/*
-**/.DS_Store
+- name: "{{ service_name }} | Run Terraform Init"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: init
 
-data/
-data_backup/
-results/
+- name: "{{ service_name }} | Run Terraform Apply"
+  ansible.builtin.include_role:
+    name: terraform
+  vars:
+    operation: apply

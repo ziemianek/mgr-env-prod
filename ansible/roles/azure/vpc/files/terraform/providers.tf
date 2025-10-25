@@ -20,10 +20,19 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-**/.terraform/*
-**/.vscode/*
-**/.DS_Store
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.48.0"
+    }
+  }
 
-data/
-data_backup/
-results/
+  required_version = ">= 1.13.3"
+
+  backend "azurerm" {}
+}
+
+provider "azurerm" {
+  features {}
+}

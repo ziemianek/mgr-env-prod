@@ -22,5 +22,3 @@
 ---
 
 service_name: aks_cluster
-
-resource_group_name: "{{ app_name }}-aks"

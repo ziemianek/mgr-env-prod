@@ -22,7 +22,7 @@
 ---
 
 - name: Delete GKE Cluster
-  hosts: GcpDeployHost
+  hosts: gcp
   gather_facts: false
   tasks:
     - name: Include role for cluster deletion
