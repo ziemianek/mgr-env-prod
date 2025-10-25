@@ -21,14 +21,31 @@
 ########################################################################################
 ---
 
-- name: "Fail if this task is not run from within tfstate_bucket role."
+- name: Fail if this task is not run from within tfstate_bucket role
   ansible.builtin.fail:
     msg: "This task can only be run from within tfstate_bucket role."
-  when: ansible_parent_role_names != "tfstate_bucket"
+  when: "'{{ cloud_name }}/tfstate_bucket' not in ansible_parent_role_names"
+
+- name: Configure container name to update based on cloud name
+  block:
+    - name: Container name in GCP is "bucket"
+      ansible.builtin.set_fact:
+        container_name: bucket
+      when: cloud_name | lower == "gcp"
+
+    - name: Container name in Azure is "storage_account_name"
+      ansible.builtin.set_fact:
+        container_name: storage_account_name
+      when: cloud_name | lower == "azure"
+
+    - name: Container name in AWS is "..."
+      ansible.builtin.set_fact:
+        container_name: ""
+      when: cloud_name | lower == "aws"
 
 - name: Set bucket name with random suffix
   ansible.builtin.set_fact:
-    tfstate_bucket_name: "terraform-state-{{ lookup('community.general.random_string', length=10, upper=false, special=false) }}"
+    tfstate_bucket_name: "terraformstate{{ lookup('community.general.random_string', length=10, upper=false, special=false) }}"
 
 - name: Debug final bucket name
   ansible.builtin.debug:
@@ -44,8 +61,8 @@
 - name: Update bucket name in backend.hcl files
   ansible.builtin.lineinfile:
     path: "{{ item.path }}"
-    regexp: '^bucket\s*='
-    line: 'bucket = "{{ tfstate_bucket_name }}"'
+    regexp: '^{{ container_name }}\s*='
+    line: '{{ container_name }} = "{{ tfstate_bucket_name }}"'
     backrefs: true
   loop: "{{ backend_files.files }}"
   loop_control:

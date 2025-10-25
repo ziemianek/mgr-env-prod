@@ -22,7 +22,7 @@
 ---
 
 - name: Create VPC in GCP
-  hosts: gcp
+  hosts: GcpDeployHost
   gather_facts: false
   tasks:
     - name: Include role for VPC creation

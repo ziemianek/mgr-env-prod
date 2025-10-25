@@ -20,7 +20,9 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-**/.terraform/*
+**/.terraform/
+**/terraform.tfstate.d/
+
 **/.vscode/*
 **/.DS_Store
 
