@@ -31,3 +31,9 @@ variable "vpc_name" {
   type        = string
   nullable    = false
 }
+
+variable "cluster_name" {
+  description = "Name of the k8s cluster"
+  type        = string
+  nullable    = false
+}
