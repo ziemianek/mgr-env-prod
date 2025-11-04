@@ -64,6 +64,11 @@ module "eks" {
       labels = {
         role = var.application_node_label
       }
+
+      tags = {
+        "k8s.io/cluster-autoscaler/enabled"             = "true"
+        "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+      }
     }
 
     monitoring-node-group = {

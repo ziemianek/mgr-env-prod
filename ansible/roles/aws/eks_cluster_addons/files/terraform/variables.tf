@@ -70,6 +70,19 @@ variable "values_cluster_ingress" {
   nullable    = false
 }
 
+# CA
+variable "cluster_autoscaler" {
+  description = "Path to the cluster-autoscaler Helm chart"
+  type        = string
+  nullable    = false
+}
+
+variable "values_cluster_autoscaler" {
+  description = "Path to values for the cluster-autoscaler Helm chart"
+  type        = string
+  nullable    = false
+}
+
 # Monitoring
 variable "kube_prometheus_stack" {
   description = "Path to the kube-prometheus-stack Helm chart"
@@ -85,6 +98,12 @@ variable "values_kube_prometheus_stack" {
 
 variable "monitoring_namespace" {
   description = "Namespace where monitoring components live"
+  type        = string
+  nullable    = false
+}
+
+variable "oidc_provider_arn" {
+  description = "OIDC provider ARN"
   type        = string
   nullable    = false
 }

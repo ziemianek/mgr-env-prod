@@ -23,10 +23,12 @@
 app_name             = "{{ app_name }}"
 cluster_name         = "{{ cluster_name }}"
 monitoring_namespace = "{{ monitoring_namespace }}"
+oidc_provider_arn    = "{{ oidc_provider_arn }}"
 
 # Addons
 cert_manager          = "{{ helm_charts.cert_manager.path }}"
 cluster_ingress       = "{{ helm_charts.cluster_ingress.path }}"
+cluster_autoscaler    = "{{ helm_charts.cluster_autoscaler.path }}"
 istiod                = "{{ helm_charts.istiod.path }}"
 istio_base            = "{{ helm_charts.istio_base.path }}"
 istio_gateway         = "{{ helm_charts.istio_gateway.path }}"
@@ -34,4 +36,5 @@ kube_prometheus_stack = "{{ helm_charts.kube_prometheus_stack.path }}"
 
 # Values for addons charts
 values_cluster_ingress       = "{{ cluster_ingress_values_rendered_template_path }}"
+values_cluster_autoscaler    = "{{ cluster_autoscaler_values_rendered_template_path }}"
 values_kube_prometheus_stack = "{{ monitoring_values_rendered_template_path }}"

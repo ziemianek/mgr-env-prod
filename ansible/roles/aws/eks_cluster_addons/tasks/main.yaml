@@ -21,7 +21,7 @@
 ########################################################################################
 ---
 
-- name: "{{ service_name }} | Render template and apply Terraform"
+- name: "{{ service_name }} | Main"
   block:
     # TODO: make this a loop
     - name: "{{ service_name }} | Render cluster-ingress values template"
@@ -30,13 +30,22 @@
         dest: "{{ cluster_ingress_values_rendered_template_path }}"
         mode: "0644"
 
+    - name: "{{ service_name }} | Render cluster-autoscaler values template"
+      ansible.builtin.template:
+        src: "{{ cluster_autoscaler_values_template_path }}"
+        dest: "{{ cluster_autoscaler_values_rendered_template_path }}"
+        mode: "0644"
+
     - name: "{{ service_name }} | Render kube-prometheus-stack values template"
       ansible.builtin.template:
         src: "{{ monitoring_values_template_path }}"
         dest: "{{ monitoring_values_rendered_template_path }}"
         mode: "0644"
 
-    - name: "{{ service_name }} | Google Cloud GKE Cluster Addons"
+    - name: "{{ service_name }} | Get OIDC ARN"
+      ansible.builtin.include_tasks: get_oidc_arn.yaml
+
+    - name: "{{ service_name }} | AWS EKS Cluster Addons"
       ansible.builtin.include_tasks: "{{ mode }}.yaml"
 
   always:

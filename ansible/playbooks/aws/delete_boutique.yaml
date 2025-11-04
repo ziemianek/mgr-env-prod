@@ -30,5 +30,5 @@
 - name: Delete eks Cluster
   ansible.builtin.import_playbook: eks_cluster/delete.yaml
 
-# - name: Delete networking stuff
-#   ansible.builtin.import_playbook: vpc/delete.yaml
+- name: Delete networking stuff
+  ansible.builtin.import_playbook: vpc/delete.yaml

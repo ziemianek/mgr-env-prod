@@ -94,3 +94,11 @@ resource "helm_release" "kube_prometheus_stack" {
 
   values = ["${file(var.values_kube_prometheus_stack)}"]
 }
+
+resource "helm_release" "cluster_autoscaler" {
+  # depends_on = [kubernetes_service_account.ca]
+  name      = "cluster-autoscaler"
+  chart     = var.cluster_autoscaler
+  namespace = "kube-system"
+  values    = ["${file(var.values_cluster_autoscaler)}"]
+}
