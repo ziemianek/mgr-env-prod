@@ -11,6 +11,11 @@
         aws eks update-kubeconfig --name {{ cluster_name }} --region {{ aws_region }}
       changed_when: true
 
+    - name: Install Metrics Server
+      ansible.builtin.command: >
+        kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+      changed_when: true
+
     - name: Get monitoring node name
       ansible.builtin.command:
         cmd: kubectl apply -f "{{ role_path }}/files/manifests/hpa.yaml"
