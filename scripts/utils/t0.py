@@ -32,4 +32,3 @@ SOAK_T0_MAP = {
     "gke_soak01": pd.Timestamp("2025-10-14 08:17:30"),
     "gke_soak02": pd.Timestamp("2025-10-18 10:07:00"),
 }
-

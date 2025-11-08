@@ -5,41 +5,17 @@ import pandas as pd
 import pathlib
 
 from typing import Dict
+from zoneinfo import ZoneInfo
+
 from logger import *
+from t0 import *
+
 
 # === CONFIGURATION ===
 TEST_TYPE = "stress"
-T0_MAP = {
-    # AKS
-    "aks_stress01": pd.Timestamp("2025-10-26 14:15:30"),
-    "aks_stress02": pd.Timestamp("2025-10-26 20:20:30"),
-    "aks_stress03": pd.Timestamp("2025-10-17 07:17:30"),
-
-    # # EKS
-    # "eks_stress01": pd.Timestamp("2025-10-17 19:59:00"),
-    # "eks_stress02": pd.Timestamp("2025-10-18 09:25:30"),
-    # "eks_stress03": pd.Timestamp("2025-10-18 08:41:15"),
-
-    # GKE
-    "gke_stress01": pd.Timestamp("2025-10-17 20:09:30"),
-    "gke_stress02": pd.Timestamp("2025-10-18 09:36:00"),
-    "gke_stress03": pd.Timestamp("2025-10-18 08:51:00"),
-}
-
+T0_MAP = STRESS_T0_MAP
 # TEST_TYPE = "soak"
-# T0_MAP = {
-#     # AKS
-#     "aks_soak01": pd.Timestamp("2025-10-26 13:29:30"),
-#     "aks_soak02": pd.Timestamp("2025-10-26 06:36:00"),
-
-#     # # EKS
-#     # "eks_soak01": pd.Timestamp("2025-10-17 19:59:00"),
-#     # "eks_soak02": pd.Timestamp("2025-10-18 09:25:30"),
-
-#     # GKE
-#     "gke_soak01": pd.Timestamp("2025-10-14 08:17:30"),
-#     "gke_soak02": pd.Timestamp("2025-10-18 10:07:00"),
-# }
+# T0_MAP = SOAK_T0_MAP
 # === END OF CONFIGURATION ===
 
 
@@ -78,15 +54,36 @@ def build_t0_key(p: str) -> str:
     return key
 
 
+def is_timestamp(df: pd.DataFrame, column: str = "Time"):
+    if not column in df.columns:
+        raise KeyError(f"Column '{column}' is missing from the DataFrame")
+    col = df[column]
+    return pd.api.types.is_numeric_dtype(col)
+
+
+def normalize_time(p: str, df: pd.DataFrame, column: str = "Time", utc: bool = True):
+    try:
+        if is_timestamp(df, column):
+            df[column] = pd.to_datetime(df[column] / 1000, unit="s", utc=utc)
+            print_debug(f"Normalized time in {p}")
+    except KeyError as e:
+        print_error(f"Could not normalize time in {p}: {e}")
+    return df
+
+
 def add_relative_time(path: str, df: pd.DataFrame) -> pd.DataFrame:
     if not "Time" in df.columns:
         raise KeyError("Column 'Time' is missing from the DataFrame")
-    df = add_timestamp(df)
-    key = build_t0_key(path)
-    df["relative_time_sec"] = df["timestamp"] - T0_MAP[key].timestamp()
-    print_debug(f"Added relative time in seconds to \"{path}\"")
-    df["relative_time_min"] = (df["relative_time_sec"] / 60)
-    print_debug(f"Added relative time in minutes to \"{path}\"")
+    if not "timestamp" in df.columns:
+        df = add_timestamp(df)
+        print_debug(f"Added timestamp to \"{path}\"")
+    if not "relative_time_sec" in df.columns:
+        key = build_t0_key(path)
+        df["relative_time_sec"] = df["timestamp"] - T0_MAP[key].timestamp()
+        print_debug(f"Added relative time in seconds to \"{path}\"")
+    if not "relative_time_min" in df.columns:
+        df["relative_time_min"] = (df["relative_time_sec"] / 60)
+        print_debug(f"Added relative time in minutes to \"{path}\"")
     return df
 
 
@@ -102,9 +99,12 @@ def main():
         print_debug(f"T0_MAP: {k}, {v}")
     data = get_data_from_path(f"./data/*/{TEST_TYPE.lower()}*/*.csv")
     for p, df in data.items():
-        data[p] = add_relative_time(p, df)
-        save_df_to_csv(p, df)
-        break
+        df = normalize_time(p, df)
+        try:
+            data[p] = add_relative_time(p, df)
+            save_df_to_csv(p, df)
+        except KeyError as e:
+            print_error(f"Could not add relative time to {p}: {e}")
 
 
 if __name__ == "__main__":
