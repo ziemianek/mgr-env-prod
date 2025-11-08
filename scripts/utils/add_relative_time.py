@@ -3,6 +3,7 @@
 import glob
 import pandas as pd
 import pathlib
+import sys
 
 from typing import Dict
 
@@ -15,6 +16,9 @@ TEST_TYPE = "stress"
 T0_MAP = STRESS_T0_MAP
 # TEST_TYPE = "soak"
 # T0_MAP = SOAK_T0_MAP
+
+CLUSTER_WIDE_DATA = f"./data/*/{TEST_TYPE.lower()}*/*.csv"
+NODE_WIDE_DATA = f"./data/*/{TEST_TYPE.lower()}*/node*/*.csv"
 # === END OF CONFIGURATION ===
 
 
@@ -49,7 +53,7 @@ def build_t0_key(p: str) -> str:
     provider = p[2]
     test = p[3]
     key = f"{provider}_{test}"
-    print_debug(f"Created t0 key: {key}")
+    print_debug(f"Composed t0 key: {key}")
     return key
 
 
@@ -64,7 +68,7 @@ def normalize_time(p: str, df: pd.DataFrame, column: str = "Time", utc: bool = T
     try:
         if is_timestamp(df, column):
             df[column] = pd.to_datetime(df[column] / 1000, unit="s", utc=utc)
-            print_debug(f"Normalized time in {p}")
+            print_debug(f"Normalized time in {p}, new format: {df['Time'].iat[0]}")
     except KeyError as e:
         print_error(f"Could not normalize time in {p}: {e}")
     return df
@@ -93,17 +97,31 @@ def save_df_to_csv(path: str, df: pd.DataFrame) -> None:
     print_debug(f"Saved df to {path}")
 
 
-def main():
-    for k, v in T0_MAP.items():
-        print_debug(f"T0_MAP: {k}, {v}")
-    data = get_data_from_path(f"./data/*/{TEST_TYPE.lower()}*/*.csv")
+def dry_run() -> bool:
+    if len(sys.argv) == 1:
+        return False
+    return sys.argv[1] == "--dry-run"
+
+
+def process_data(path: str) -> None:
+    data = get_data_from_path(path)
     for p, df in data.items():
         df = normalize_time(p, df)
         try:
             data[p] = add_relative_time(p, df)
-            save_df_to_csv(p, df)
+            if not dry_run():
+                save_df_to_csv(p, df)
         except KeyError as e:
             print_error(f"Could not add relative time to {p}: {e}")
+
+
+def main():
+    if dry_run():
+        print_debug("=== DRY RUN ===")
+    for k, v in T0_MAP.items():
+        print_debug(f"T0_MAP: {k}, {v}")
+    process_data(CLUSTER_WIDE_DATA)
+    process_data(NODE_WIDE_DATA)
 
 
 if __name__ == "__main__":

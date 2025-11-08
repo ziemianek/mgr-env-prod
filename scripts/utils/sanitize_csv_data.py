@@ -36,7 +36,7 @@ def clean_csv_file(path: pathlib.Path) -> None:
 
 
 def clean_all_csvs(root: pathlib.Path) -> None:
-    csv_files = list(Path(root).rglob("*.csv"))
+    csv_files = list(pathlib.Path(root).rglob("*.csv"))
     print_debug(f"Found {len(csv_files)} files in {root.resolve()}")
     for csv_path in csv_files:
         clean_csv_file(csv_path)

@@ -7,10 +7,10 @@ STRESS_T0_MAP = {
     "aks_stress02": pd.Timestamp("2025-10-26 20:20:30"),
     "aks_stress03": pd.Timestamp("2025-10-17 07:17:30"),
 
-    # # EKS
-    # "eks_stress01": pd.Timestamp("2025-10-17 19:59:00"),
-    # "eks_stress02": pd.Timestamp("2025-10-18 09:25:30"),
-    # "eks_stress03": pd.Timestamp("2025-10-18 08:41:15"),
+    # EKS
+    "eks_stress01": pd.Timestamp("2025-11-08 10:57:30"),
+    "eks_stress02": pd.Timestamp("2025-11-08 17:58:00"),
+    "eks_stress03": pd.Timestamp("2025-11-08 19:18:00"),
 
     # GKE
     "gke_stress01": pd.Timestamp("2025-10-17 20:09:30"),
