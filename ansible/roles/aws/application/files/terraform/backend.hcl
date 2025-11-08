@@ -20,6 +20,6 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
-bucket = "bucket"
+bucket = "terraformstatebdpzyrgiqg"
 key    = "boutique/application"
 region = "eu-central-1"

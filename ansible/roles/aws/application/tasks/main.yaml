@@ -19,5 +19,6 @@
 #
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
----+- name: "{{ service_name }} | Main"
+
+- name: "{{ service_name }} | Main"
   ansible.builtin.include_tasks: "{{ mode }}.yaml"

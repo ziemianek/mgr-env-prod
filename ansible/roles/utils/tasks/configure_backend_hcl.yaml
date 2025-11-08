@@ -38,9 +38,9 @@
         container_name: storage_account_name
       when: cloud_name | lower == "azure"
 
-    - name: Container name in AWS is "..."
+    - name: Container name in AWS is "bucket"
       ansible.builtin.set_fact:
-        container_name: ""
+        container_name: bucket
       when: cloud_name | lower == "aws"
 
 - name: Set bucket name with random suffix

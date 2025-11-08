@@ -23,9 +23,10 @@
 
 cloud_name: aws
 
-# GCP
-aws_region: 
+aws_region: eu-central-1
 
 # Terraform
 tf_environment:
-  ...
+  AWS_ACCESS_KEY_ID: "{{ vault_aws_access_key }}"
+  AWS_SECRET_ACCESS_KEY: "{{ vault_aws_secret_key }}"
+

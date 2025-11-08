@@ -20,3 +20,10 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 ---
+
+vault_aws_access_key: "<your-access-key-id>"
+vault_aws_secret_key: "<your-secret-access-key>"
+
+# Replace with your own credentials, or leave as it is...
+vault_grafana_admin_username: admin
+vault_grafana_admin_password: password

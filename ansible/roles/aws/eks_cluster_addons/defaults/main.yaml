@@ -36,11 +36,16 @@ helm_charts:
     path: "{{ helm_charts_dir }}/istio-gateway"
   cluster_ingress:
     path: "{{ helm_charts_dir }}/cluster-ingress"
+  cluster_autoscaler:
+    path: "{{ helm_charts_dir }}/cluster-autoscaler"
   kube_prometheus_stack:
     path: "{{ helm_charts_dir }}/kube-prometheus-stack"
 
 cluster_ingress_values_template_path: "{{ role_path }}/templates/values/values-cluster-ingress.j2.yaml"
 cluster_ingress_values_rendered_template_path: /tmp/values-cluster-ingress.yaml
+
+cluster_autoscaler_values_template_path: "{{ role_path }}/templates/values/values-cluster-autoscaler.j2.yaml"
+cluster_autoscaler_values_rendered_template_path: /tmp/values-cluster-autoscaler.yaml
 
 monitoring_values_template_path: "{{ role_path }}/templates/values/values-kube-prometheus-stack.j2.yaml"
 monitoring_values_rendered_template_path: /tmp/values-kube-prometheus-stack.yaml

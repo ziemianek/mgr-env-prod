@@ -7,19 +7,19 @@ Start with [Prerequisites](./Prerequisites.md).
 
 ## 2. Create a new project and set it as the active one  
 
-![](./images/001_gke.png)  
-![](./images/002_gke.png)
+![](./images/gke/001_gke.png)  
+![](./images/gke/002_gke.png)
 
 Copy the **Project ID** – it will be required later in Terraform.  
 
-![](./images/003_gke.png)
+![](./images/gke/003_gke.png)
 
 ## 3. Install [gcloud CLI](https://cloud.google.com/sdk/docs/install) for your operating system
 
 ## 4. Verify the installation  
 If successful, you should now be able to use the `gcloud` CLI:  
 
-![](./images/004_gke.png)  
+![](./images/gke/004_gke.png)
 
 ## 5. Authenticate gcloud CLI with your Google account  
 Run:

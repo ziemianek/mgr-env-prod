@@ -1,0 +1,78 @@
+########################################################################################
+# Project: 
+#   Managed Kubernetes Services: A Comparison of AKS, EKS and GKE
+#
+# Author:  
+#   Michał Ziemianek
+#
+# Description:
+#   The project focuses on deploying and benchmarking
+#   a microservices-based application using Kubernetes and cloud-native technologies
+#   (Terraform, Ansible, Helm, Prometheus, Grafana, K6).
+#
+# License:
+#   Apache 2.0
+#
+# Notes:
+#   - This code is intended for educational and research purposes.
+#   - Ensure proper configuration of cloud resources before execution.
+#
+# © 2025 Michał Ziemianek. All rights reserved.
+########################################################################################
+---
+
+# TODO: make this a common role for all clouds
+
+# Wrapped in a block to pass env variables
+# https://github.com/ansible/ansible/issues/53626
+- name: "{{ service_name }} | Block wrapper"
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_path }}"
+  block:
+    - name: "{{ service_name }} | Get kubeconfig for the '{{ cluster_name }}' cluster"
+      ansible.builtin.command: >
+        aws eks update-kubeconfig
+        --name {{ cluster_name }}
+        --region {{ aws_region }}
+      changed_when: true
+    
+    - name: "{{ service_name }} | Get OIDC issuer for cluster '{{ cluster_name }}'"
+      ansible.builtin.command: >
+        aws eks describe-cluster
+        --name {{ cluster_name }}
+        --region {{ aws_region }}
+        --query "cluster.identity.oidc.issuer"
+        --output text
+      register: oidc_issuer
+      changed_when: false
+
+    - name: "{{ service_name }} | Associate IAM OIDC provider if not exists"
+      ansible.builtin.command: >
+        eksctl utils associate-iam-oidc-provider
+        --cluster {{ cluster_name }}
+        --region {{ aws_region }}
+        --approve
+      when: oidc_issuer.stdout == "None"
+      changed_when: true
+
+    - name: "{{ service_name }} | Extract OIDC ID from issuer URL"
+      ansible.builtin.set_fact:
+        oidc_id: "{{ oidc_issuer.stdout.split('/')[-1] }}"
+      when: oidc_issuer.stdout != "None"
+
+    - name: "{{ service_name }} | Get AWS account ID"
+      ansible.builtin.command: aws sts get-caller-identity --query "Account" --output text
+      register: aws_account_id
+      changed_when: false
+
+    - name: "{{ service_name }} | Build OIDC provider ARN"
+      ansible.builtin.set_fact:
+        oidc_provider_arn: >-
+          arn:aws:iam::{{ aws_account_id.stdout }}:oidc-provider/oidc.eks.{{ aws_region }}.amazonaws.com/id/{{ oidc_id }}
+      when: oidc_issuer.stdout != "None"
+
+  always:
+    - name: "{{ service_name }} | Clean kubeconfig"
+      ansible.builtin.file:
+        path: "{{ k8s_kubeconfig_path }}"
+        state: absent

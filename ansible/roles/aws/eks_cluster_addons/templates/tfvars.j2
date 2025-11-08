@@ -1,0 +1,40 @@
+########################################################################################
+# Project: 
+#   Managed Kubernetes Services: A Comparison of AKS, EKS and GKE
+#
+# Author:  
+#   Michał Ziemianek
+#
+# Description:
+#   The project focuses on deploying and benchmarking
+#   a microservices-based application using Kubernetes and cloud-native technologies
+#   (Terraform, Ansible, Helm, Prometheus, Grafana, K6).
+#
+# License:
+#   Apache 2.0
+#
+# Notes:
+#   - This code is intended for educational and research purposes.
+#   - Ensure proper configuration of cloud resources before execution.
+#
+# © 2025 Michał Ziemianek. All rights reserved.
+########################################################################################
+
+app_name             = "{{ app_name }}"
+cluster_name         = "{{ cluster_name }}"
+monitoring_namespace = "{{ monitoring_namespace }}"
+oidc_provider_arn    = "{{ oidc_provider_arn }}"
+
+# Addons
+cert_manager          = "{{ helm_charts.cert_manager.path }}"
+cluster_ingress       = "{{ helm_charts.cluster_ingress.path }}"
+cluster_autoscaler    = "{{ helm_charts.cluster_autoscaler.path }}"
+istiod                = "{{ helm_charts.istiod.path }}"
+istio_base            = "{{ helm_charts.istio_base.path }}"
+istio_gateway         = "{{ helm_charts.istio_gateway.path }}"
+kube_prometheus_stack = "{{ helm_charts.kube_prometheus_stack.path }}"
+
+# Values for addons charts
+values_cluster_ingress       = "{{ cluster_ingress_values_rendered_template_path }}"
+values_cluster_autoscaler    = "{{ cluster_autoscaler_values_rendered_template_path }}"
+values_kube_prometheus_stack = "{{ monitoring_values_rendered_template_path }}"

@@ -32,12 +32,6 @@ variable "vpc_name" {
   nullable    = false
 }
 
-variable "subnet_ids" {
-  description = "Subnet IDs for EKS cluster"
-  type        = list(string)
-  nullable    = false
-}
-
 variable "cluster_name" {
   description = "EKS cluster name"
   type        = string
