@@ -21,8 +21,8 @@
 ########################################################################################
 ---
 
-# - name: Create networking stuff
-#   ansible.builtin.import_playbook: vpc/create.yaml
+- name: Create networking stuff
+  ansible.builtin.import_playbook: vpc/create.yaml
 
 - name: Create EKS Cluster
   ansible.builtin.import_playbook: eks_cluster/create.yaml
