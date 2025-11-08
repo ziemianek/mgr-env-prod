@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 # ===== START OF CONFIGURATION =====
-K8S = "gke"  # gke / eks / aks
+K8S = "aks"  # gke / eks / aks
 TEST_TYPE = "stress"  # stress / soak
 # ====== END OF CONFIGURATION ======
 
@@ -162,7 +162,7 @@ if __name__ == '__main__':
     ax.set_xticklabels(df_tests.index, fontsize=10)
     ax.set_xlabel("")
     ax.set_ylabel("Czas odpowiedzi [s]")
-    ax.set_title("Średni czas odpowiedzi HTTP podczas testów stresowych GKE")
+    ax.set_title(f"Średni czas odpowiedzi HTTP podczas testów stresowych {K8S.upper()}")
 
     # Etykiety z jednostkami
     for bars, unit in zip([bars1, bars2, bars3], ["s", "s", "s"]):
@@ -244,7 +244,7 @@ if __name__ == '__main__':
                     bbox=dict(facecolor="white", alpha=0.9, edgecolor="none"))
 
     # --- Tytuł i zapis ---
-    plt.title("Liczba żądań i błędów HTTP podczas testów stresowych GKE")
+    plt.title(f"Liczba żądań i błędów HTTP podczas testów stresowych {K8S.upper()}")
     fig.tight_layout()
     fig.savefig(PLOTS_OUTPUT_DIR / f"{K8S}_rps_vs_errors.png", dpi=300)
     plt.close()
@@ -272,7 +272,7 @@ if __name__ == '__main__':
     ax.set_xticklabels(df_tests.index, fontsize=10)
     ax.set_xlabel("")
     ax.set_ylabel("Przepływ danych [MB/s]")
-    ax.set_title("Transfer danych podczas testów stresowych GKE")
+    ax.set_title(f"Transfer danych podczas testów stresowych {K8S.upper()}")
 
     # Etykiety z jednostkami
     for bars, unit in zip([bars_rx, bars_tx], ["MB/s", "MB/s"]):
@@ -314,7 +314,7 @@ if __name__ == '__main__':
     ax.set_xticklabels(df_tests.index, fontsize=10)
     ax.set_xlabel("")
     ax.set_ylabel("Czas iteracji [s]")
-    ax.set_title("Czas wykonania iteracji testowych (iteration duration) w GKE")
+    ax.set_title(f"Czas wykonania iteracji testowych (iteration duration) w {K8S.upper()}")
 
     # Etykiety z jednostkami
     for bars, unit in zip([bars_avg, bars_p95], ["s", "s"]):
