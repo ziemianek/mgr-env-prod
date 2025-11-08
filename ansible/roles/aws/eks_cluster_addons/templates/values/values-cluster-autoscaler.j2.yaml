@@ -1,0 +1,26 @@
+
+autoDiscovery:
+  clusterName: "{{ cluster_name }}"
+  namespace: "{{ application_namespace }}"
+
+awsRegion: "{{ aws_region }}"
+
+rbac:
+  serviceAccount:
+    create: true
+    name: cluster-autoscaler
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::735887174655:role/eks-cluster-autoscaler-irsa
+
+
+# Prevent eviction by CA
+extraAnnotations:
+  cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+
+extraArgs:
+  balance-similar-node-groups: true
+  skip-nodes-with-local-storage: false
+  expander: least-waste
+
+# podAnnotations:
+#   eks.amazonaws.com/role-arn: arn:aws:iam::735887174655:role/eks-cluster-autoscaler-irsa

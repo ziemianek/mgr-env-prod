@@ -1,0 +1,95 @@
+########################################################################################
+# Project: 
+#   Managed Kubernetes Services: A Comparison of AKS, EKS and GKE
+#
+# Author:  
+#   Michał Ziemianek
+#
+# Description:
+#   The project focuses on deploying and benchmarking
+#   a microservices-based application using Kubernetes and cloud-native technologies
+#   (Terraform, Ansible, Helm, Prometheus, Grafana, K6).
+#
+# License:
+#   Apache 2.0
+#
+# Notes:
+#   - This code is intended for educational and research purposes.
+#   - Ensure proper configuration of cloud resources before execution.
+#
+# © 2025 Michał Ziemianek. All rights reserved.
+########################################################################################
+---
+
+# TODO: make this a common role for all clouds
+
+# Wrapped in a block to pass env variables
+# https://github.com/ansible/ansible/issues/53626
+- name: "{{ service_name }} | Block wrapper"
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_path }}"
+  block:
+    - name: "{{ service_name }} | Get kubeconfig for the '{{ cluster_name }}' cluster"
+      ansible.builtin.command: >
+        aws eks update-kubeconfig --name {{ cluster_name }} --region {{ aws_region }}
+      changed_when: true
+
+    # TODO: refactor this ====
+    - name: Ensure Service has Envoy Prometheus port (15090)
+      ansible.builtin.shell: |
+        kubectl patch svc istio-ingress-gateway -n istio-ingress --type='json' -p='[
+          {"op": "add", "path": "/spec/ports/-", "value": {"name":"http-envoy-prom","port":15090,"targetPort":15090,"protocol":"TCP"}}
+        ]' || true
+      register: add_port_result
+      changed_when: "'configured' in add_port_result.stdout or 'patched' in add_port_result.stdout"
+
+    - name: Add Prometheus scrape annotations to Service
+      ansible.builtin.command: >
+        kubectl annotate svc istio-ingress-gateway -n istio-ingress
+        prometheus.io/scrape="true"
+        prometheus.io/path="/stats/prometheus"
+        prometheus.io/port="15090"
+        --overwrite
+      register: annotate_result
+      changed_when: "'annotated' in annotate_result.stdout or 'configured' in annotate_result.stdout"
+
+    - name: Ensure Service has label app=istio-ingress-gateway
+      ansible.builtin.command: >
+        kubectl label svc istio-ingress-gateway -n istio-ingress
+        app=istio-ingress-gateway
+        --overwrite
+      register: label_result
+      changed_when: "'labeled' in label_result.stdout or 'configured' in label_result.stdout"
+
+    - name: Create or update ServiceMonitor for Istio Ingress Gateway
+      ansible.builtin.shell: |
+        cat <<EOF | kubectl apply -f -
+        apiVersion: monitoring.coreos.com/v1
+        kind: ServiceMonitor
+        metadata:
+          name: istio-ingress
+          namespace: monitoring
+          labels:
+            release: kube-prometheus-stack
+        spec:
+          selector:
+            matchLabels:
+              app: istio-ingress-gateway
+          namespaceSelector:
+            matchNames:
+              - istio-ingress
+          endpoints:
+            - port: http-envoy-prom
+              path: /stats/prometheus
+              interval: 15s
+              scheme: http
+        EOF
+      register: sm_apply
+      changed_when: "'created' in sm_apply.stdout or 'configured' in sm_apply.stdout"
+    # =====
+
+  always:
+    - name: "{{ service_name }} | Clean kubeconfig"
+      ansible.builtin.file:
+        path: "{{ k8s_kubeconfig_path }}"
+        state: absent

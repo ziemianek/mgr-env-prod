@@ -24,7 +24,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.16"
+      version = "~> 6.18"
     }
 
     kubernetes = {
@@ -45,14 +45,6 @@ terraform {
 
 provider "aws" {
   region = var.region
-}
-
-data "aws_eks_cluster" "cluster" {
-  name = var.cluster_name
-}
-
-data "aws_eks_cluster_auth" "cluster_auth" {
-  name = var.cluster_name
 }
 
 provider "kubernetes" {
