@@ -4,13 +4,15 @@ import pathlib
 import re
 import shutil
 
-from logger import *
+from scripts.utils.logger import *
 
 
+# ===== START OF CONFIGURATION =====
 ROOT_DIR = pathlib.Path("data")
 BACKUP_DIR = pathlib.Path("data_backup")
 BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 SEP_LINE_RE = re.compile(r'^\ufeff?\s*sep\s*=\s*.*$', re.IGNORECASE)
+# ====== END OF CONFIGURATION ======
 
 
 def clean_csv_file(path: pathlib.Path) -> None:

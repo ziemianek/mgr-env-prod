@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import glob
 import numpy as np
 import pathlib
@@ -12,7 +14,7 @@ from logger import *
 # ===== START OF CONFIGURATION =====
 TEST_TYPE = "stress"  # stress / soak
 PATH = f"./data/*/{TEST_TYPE.lower()}*/k6_results.txt"
-OUTPUT_PATH = "./data/k6_results_summary.csv"
+OUTPUT_PATH = f"./data/k6_{TEST_TYPE.lower()}_results_summary.csv"
 # ====== END OF CONFIGURATION ======
 
 

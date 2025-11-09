@@ -7,8 +7,8 @@ import sys
 
 from typing import Dict
 
-from logger import *
-from t0 import *
+from scripts.utils.logger import *
+from scripts.utils.t0 import *
 
 
 # === CONFIGURATION ===
@@ -77,16 +77,13 @@ def normalize_time(p: str, df: pd.DataFrame, column: str = "Time", utc: bool = T
 def add_relative_time(path: str, df: pd.DataFrame) -> pd.DataFrame:
     if not "Time" in df.columns:
         raise KeyError("Column 'Time' is missing from the DataFrame")
-    if not "timestamp" in df.columns:
-        df = add_timestamp(df)
-        print_debug(f"Added timestamp to \"{path}\"")
-    if not "relative_time_sec" in df.columns:
-        key = build_t0_key(path)
-        df["relative_time_sec"] = df["timestamp"] - T0_MAP[key].timestamp()
-        print_debug(f"Added relative time in seconds to \"{path}\"")
-    if not "relative_time_min" in df.columns:
-        df["relative_time_min"] = (df["relative_time_sec"] / 60)
-        print_debug(f"Added relative time in minutes to \"{path}\"")
+    df = add_timestamp(df)
+    print_debug(f"Added timestamp to \"{path}\"")
+    key = build_t0_key(path)
+    df["relative_time_sec"] = df["timestamp"] - T0_MAP[key].timestamp()
+    print_debug(f"Added relative time in seconds to \"{path}\"")
+    df["relative_time_min"] = (df["relative_time_sec"] / 60)
+    print_debug(f"Added relative time in minutes to \"{path}\"")
     return df
 
 
