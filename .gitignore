@@ -25,6 +25,7 @@
 
 **/.vscode/*
 **/.DS_Store
+**/__pycache__
 
 data/
 data_backup/
