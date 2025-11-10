@@ -16,7 +16,8 @@ from scripts.utils.t0 import *
 # ===== START OF CONFIGURATION =====
 TEST_TYPE = "stress"  # stress / soak
 PATH = f"./data/*/{TEST_TYPE.lower()}*/Total Requests (increase over 1m).csv"
-OUTPUT_PATH = f"rps_{TEST_TYPE.lower()}_plot.png"
+PLOT_OUTPUT_PATH = f"./results/mean_rps_{TEST_TYPE.lower()}_plot.png"
+DF_OUTPUT_PATH = "./data/{}/mean_rps_{}.csv"
 # ===== END OF CONFIGURATION =====
 
 
@@ -95,9 +96,16 @@ def plot(data: Dict[str, pd.DataFrame]) -> None:
     plt.grid(True, linestyle="--", alpha=0.5)
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    # plt.show()
     if not dry_run():
-        plt.savefig(OUTPUT_PATH, dpi=200)
+        plt.savefig(PLOT_OUTPUT_PATH, dpi=200)
+
+
+def save_df_to_csv(path: str, df: pd.DataFrame) -> None:
+    p = pathlib.Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(p, index=False, encoding="utf-8")
+    print_debug(f"Saved df to {path}")
 
 
 def main() -> None:
@@ -112,6 +120,11 @@ def main() -> None:
         df = add_rps(df)
         print_debug(f"{c} -> shape {df.shape}")
         print_debug(f"Head of {c}:\n{df.head()}")
+        if not dry_run():
+            save_df_to_csv(
+                DF_OUTPUT_PATH.format(c, TEST_TYPE.lower()),
+                df
+            )
     plot(res)
 
 

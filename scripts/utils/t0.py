@@ -15,7 +15,7 @@ STRESS_T0_MAP = {
     # GKE
     "gke_stress01": pd.Timestamp("2025-10-17 20:09:30"),
     "gke_stress02": pd.Timestamp("2025-10-18 07:36:00"),
-    "gke_stress03": pd.Timestamp("2025-10-18 8:51:00"),
+    "gke_stress03": pd.Timestamp("2025-10-18 08:51:00"),
 }
 
 SOAK_T0_MAP = {
