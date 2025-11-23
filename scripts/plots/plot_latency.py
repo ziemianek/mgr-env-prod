@@ -1,4 +1,5 @@
 import glob
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import pathlib
@@ -6,12 +7,15 @@ import re
 import sys
 
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict, Tuple
 from scripts.utils.logger import *
 
 
 # ===== START OF CONFIGURATION =====
 TEST_TYPE = "stress"  # stress / soak
+TEST_START_FINISH = {"start": 0.0, "finish": 10.0}
+# TEST_TYPE = "soak"
+# TEST_START_FINISH = {"start": 0.0, "finish": 240.0}
 PATH = f"./data/*/{TEST_TYPE.lower()}*/*.csv"
 RPS_PATH = f"./data/*/mean_rps_{TEST_TYPE.lower()}.csv"
 PLOT_OUTPUT_PATH = f"./results/http_latency_{TEST_TYPE.lower()}_plot.png"
@@ -25,12 +29,28 @@ REQUIRED_FILES = [
 ]
 
 
+def to_ms(series: pd.Series) -> pd.Series:
+    s = series.astype(str).str.strip()
+    s = s.str.replace(",", ".", regex=False)
+    ex = s.str.extract(r'^\s*(?P<val>[-+]?\d+(?:\.\d+)?)\s*(?P<u>ms|s|us|µs)?\s*$', expand=True)
+    vals = pd.to_numeric(ex["val"], errors="coerce")
+    units = ex["u"].str.lower().fillna("ms")
+    factor = np.where(units.eq("s"), 1000.0,
+               np.where(units.isin(["us", "µs"]), 0.001, 1.0))
+    return vals * factor
+
+
 def get_data_from_path(path: str, read_func: callable = pd.read_csv) -> Dict[str, pd.DataFrame]:
     data = {}
     for file in glob.glob(path):
         if file.strip().split("/")[-1] in REQUIRED_FILES:
             print_debug(f"Found file matching pattern: {file}")
-            data[file] = read_func(file)
+            df = read_func(file)
+            for col in df.columns:
+                if "duration" in col.lower() or "latency" in col.lower():
+                    df[col] = to_ms(df[col])
+                    print_debug(f"[CLEANED] Parsed time-unit column: {col} in {file}")
+            data[file] = df
     if len(data) == 0:
         print_error("Did not found any data! Returning empty dict")
     else:
@@ -97,27 +117,36 @@ def combine_all(avg_dict, p95_dict, rps_dict):
     return result
 
 
+def clip_data_to_timeframe(df: pd.DataFrame, col: str, range: Tuple[int, int]) -> pd.DataFrame:
+    return df[df[col].between(range[0], range[1])]
+
+
 def plot(data: Dict[str, pd.DataFrame]) -> None:
     clusters = list(data.keys())
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     for ax, cluster in zip(axes, clusters):
         df = data[cluster]
+        df = clip_data_to_timeframe(df, "relative_time_min", (0, 15))
         df.fillna(0, inplace=True)
         ax.plot(
             df["relative_time_min"],
-            df["mean avg duration (ms)"],
-            label="AVG (ms)",
+            df["mean avg duration (ms)"] // 600 if TEST_TYPE.lower() == "stress" else df["mean avg duration (ms)"],
+            label="Średni czas odp. (s)" if TEST_TYPE.lower() == "stress" else "Średni czas odp. (ms)",
             linewidth=2
         )
         ax.plot(
             df["relative_time_min"],
-            df["mean p95 latency (ms)"],
-            label="P95 (ms)",
+            df["mean p95 latency (ms)"] // 600 if TEST_TYPE.lower() == "stress" else df["mean p95 latency (ms)"],
+            label="95. Percentyl czasu odp. (s)" if TEST_TYPE.lower() == "stress" else "95. Percentyl czasu odp. (ms)",
             linewidth=2
         )
         ax.set_title(cluster.upper())
-        ax.set_xlabel("Time (min)")
-        ax.set_ylabel("Latency (ms)")
+        ax.axvline(x=TEST_START_FINISH["start"], color="red", linestyle="--", linewidth=1)
+        ax.axvline(x=TEST_START_FINISH["finish"], color="red", linestyle="--", linewidth=1)
+        ax.axvspan(TEST_START_FINISH["start"], TEST_START_FINISH["finish"], color="grey", alpha=0.1)
+        ax.set_xlabel("Czas od rozpoczęcia testu (min)")
+        ax.set_ylabel("Czas odpowiedzi (s)" if TEST_TYPE.lower() == "stress" else "Czas odpowiedzi (ms)")
+        ax.set_yticks(range(0, 61, 10))
         ax.grid(True, linestyle="--", alpha=0.4)
         ax2 = ax.twinx()
         ax2.plot(
@@ -130,14 +159,17 @@ def plot(data: Dict[str, pd.DataFrame]) -> None:
             alpha=0.4
         )
         ax2.set_ylabel("RPS")
+        ax2.set_yticks(range(0, 301, 100))
+        ax2.set_xticks(range(0, 16, 3))
         lines, labels = ax.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
         ax.legend(lines + lines2, labels + labels2, loc="upper left")
-    plt.suptitle("Latency (AVG, P95) + RPS Over Time per Cluster", fontsize=14)
+    plt.suptitle("Czas odpowiedzi (Średnia, P95) oraz RPS w czasie dla każdego klastra")
     plt.tight_layout()
     if not dry_run():
         plt.savefig(PLOT_OUTPUT_PATH, dpi=200)
-    plt.show()
+    else:
+        plt.show()
 
 
 def main():

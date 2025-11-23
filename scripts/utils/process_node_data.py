@@ -9,10 +9,9 @@ from scripts.utils.logger import *
 
 
 # ===== START OF CONFIGURATION =====
-TEST_TYPE = "stress"  # stress / soak
+# TEST_TYPE = "stress"
+TEST_TYPE = "soak"
 PATH = "./data/{}/{}*/node*/*.csv"
-# PLOT_OUTPUT_PATH = f"./results/http_latency_{TEST_TYPE.lower()}_plot.png"
-# DF_OUTPUT_PATH = "./data/{}/http_latency_{}.csv"
 # ===== END OF CONFIGURATION =====
 
 REQUIRED_FILES = [
@@ -79,7 +78,7 @@ def main():
     for cluster in ["aks", "eks", "gke"]:
         print_debug(f"Processing data for {cluster}...")
         df = merge_dfs_per_cluster(cluster)
-        df = clip_data_to_timeframe(df, "relative_time_min", (-5, 20))
+        df = clip_data_to_timeframe(df, "relative_time_min", (0, 260))
         print(df.head())
         if not dry_run():
             save_df_to_csv(f"./data/{cluster}/{TEST_TYPE.lower()}_node_merged_df.csv", df)

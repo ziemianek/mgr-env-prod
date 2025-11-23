@@ -12,10 +12,10 @@ from scripts.utils.t0 import *
 
 
 # === CONFIGURATION ===
-TEST_TYPE = "stress"
-T0_MAP = STRESS_T0_MAP
-# TEST_TYPE = "soak"
-# T0_MAP = SOAK_T0_MAP
+# TEST_TYPE = "stress"
+# T0_MAP = STRESS_T0_MAP
+TEST_TYPE = "soak"
+T0_MAP = SOAK_T0_MAP
 
 CLUSTER_WIDE_DATA = f"./data/*/{TEST_TYPE.lower()}*/*.csv"
 NODE_WIDE_DATA = f"./data/*/{TEST_TYPE.lower()}*/node*/*.csv"

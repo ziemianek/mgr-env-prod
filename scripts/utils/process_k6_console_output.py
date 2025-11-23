@@ -8,11 +8,12 @@ import re
 import sys
 
 from typing import Dict, Optional
-from logger import *
+from scripts.utils.logger import *
 
 
 # ===== START OF CONFIGURATION =====
-TEST_TYPE = "stress"  # stress / soak
+# TEST_TYPE = "stress"  # stress / soak
+TEST_TYPE = "soak"
 PATH = f"./data/*/{TEST_TYPE.lower()}*/k6_results.txt"
 OUTPUT_PATH = f"./data/k6_{TEST_TYPE.lower()}_results_summary.csv"
 # ====== END OF CONFIGURATION ======

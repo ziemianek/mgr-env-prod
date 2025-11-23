@@ -9,11 +9,20 @@ from scripts.utils.logger import *
 
 
 # ===== START OF CONFIGURATION =====
-TEST_TYPE = "stress"  # stress / soak
+# TEST_TYPE = "stress"
+TEST_TYPE = "soak"
+# TEST_START_FINISH = {"start": 0.0, "finish": 10.0}
+TEST_START_FINISH = {"start": 0.0, "finish": 240.0}
 PATH = f"./data/*/{TEST_TYPE.lower()}_node_merged_df.csv"
 CPU_PLOT_OUTPUT_PATH = f"./results/cpu_{TEST_TYPE.lower()}_plot.png"
 MEM_PLOT_OUTPUT_PATH = f"./results/mem_{TEST_TYPE.lower()}_plot.png"
 # ===== END OF CONFIGURATION =====
+
+cluster_colors = {
+    "aks": "blue",
+    "gke": "green",
+    "eks": "orange"
+}
 
 
 def get_data_from_path(path: str, read_func: callable = pd.read_csv) -> Dict[str, pd.DataFrame]:
@@ -69,65 +78,80 @@ def get_cluster_name(path: str) -> str:
     return cluster
 
 
-
 def plot_cpu(data: Dict[str, pd.DataFrame]) -> None:
     plt.figure(figsize=(12, 6))
     for cluster, df in data.items():
+        color = cluster_colors[cluster]
         if "node1_cpu_avg" in df.columns:
             plt.plot(
                 df["relative_time_min"],
                 df["node1_cpu_avg"],
                 linewidth=2,
-                label=f"{cluster.upper()} Node1"
+                color=color,
+                label=f"{cluster.upper()} Węzeł 1"
             )
         if "node2_cpu_avg" in df.columns:
             plt.plot(
                 df["relative_time_min"],
                 df["node2_cpu_avg"],
                 linewidth=2,
+                color=color,
                 linestyle="dashed",
                 alpha=0.7,
-                label=f"{cluster.upper()} Node2"
+                label=f"{cluster.upper()} Węzeł 2"
             )
-    plt.xlabel("Time (min)")
-    plt.ylabel("CPU Utilisation (%)")
-    plt.title("CPU Utilisation Comparison Across Clusters (Node1 & Node2)")
+    plt.axvline(x=TEST_START_FINISH["start"], color="red", linestyle="--", linewidth=1)
+    plt.axvline(x=TEST_START_FINISH["finish"], color="red", linestyle="--", linewidth=1)
+    plt.axvspan(TEST_START_FINISH["start"], TEST_START_FINISH["finish"], color="grey", alpha=0.1)
+    plt.xlabel("Czas od rozpoczęcia testu (min)")
+    plt.ylabel("Zużycie CPU (%)")
+    plt.yticks(range(0, 101, 10))
+    plt.xticks(range(0, 271, 30))
+    plt.title("Porównanie zużycia CPU między klastrami")
     plt.grid(True, linestyle="--", alpha=0.4)
     plt.legend(loc="upper left")
     plt.tight_layout()
     if not dry_run():
         plt.savefig(CPU_PLOT_OUTPUT_PATH, dpi=200)
-    plt.show()
+    # plt.show()
 
 
 def plot_mem(data: Dict[str, pd.DataFrame]) -> None:
     plt.figure(figsize=(12, 6))
     for cluster, df in data.items():
+        color = cluster_colors[cluster]
         if "node1_mem_avg" in df.columns:
             plt.plot(
                 df["relative_time_min"],
                 df["node1_mem_avg"],
                 linewidth=2,
-                label=f"{cluster.upper()} Node1"
+                color=color,
+                label=f"{cluster.upper()} Węzeł 1"
             )
         if "node2_mem_avg" in df.columns:
             plt.plot(
                 df["relative_time_min"],
                 df["node2_mem_avg"],
                 linewidth=2,
+                color=color,
                 linestyle="dashed",
                 alpha=0.7,
-                label=f"{cluster.upper()} Node2"
+                label=f"{cluster.upper()} Węzeł 2"
             )
-    plt.xlabel("Time (min)")
-    plt.ylabel("Memory Utilisation (%)")
-    plt.title("Memory Utilisation Comparison Across Clusters (Node1 & Node2)")
+    plt.axvline(x=TEST_START_FINISH["start"], color="red", linestyle="--", linewidth=1)
+    plt.axvline(x=TEST_START_FINISH["finish"], color="red", linestyle="--", linewidth=1)
+    plt.axvspan(TEST_START_FINISH["start"], TEST_START_FINISH["finish"], color="grey", alpha=0.1)
+    plt.xlabel("Czas od rozpoczęcia testu (min)")
+    plt.ylabel("Zużycie RAM (%)")
+    plt.yticks(range(0, 31, 5))
+    plt.xticks(range(0, 271, 30))
+    plt.title("Porównanie zużycia RAM między klastrami")
     plt.grid(True, linestyle="--", alpha=0.4)
     plt.legend(loc="upper left")
     plt.tight_layout()
     if not dry_run():
         plt.savefig(MEM_PLOT_OUTPUT_PATH, dpi=200)
-    plt.show()
+    # plt.show()
 
 
 def main():
