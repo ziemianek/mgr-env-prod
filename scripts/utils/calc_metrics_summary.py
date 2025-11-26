@@ -3,13 +3,19 @@ import pathlib
 import sys
 
 from collections import defaultdict
-from typing import Dict
+from typing import Dict, Tuple
 from scripts.utils.logger import *
 
 
 CLUSTERS = ["aks", "eks", "gke"]
-TEST_TYPE = "soak"
-# TEST_TYPE = "stress"
+
+# TEST_TYPE = "soak"
+# TIMEFRAME = (0, 240)
+
+TEST_TYPE = "stress"
+TIMEFRAME = (0.5, 10.5)
+
+CLIP = True
 
 
 def get_data_from_path(path: str) -> pd.DataFrame:
@@ -18,10 +24,18 @@ def get_data_from_path(path: str) -> pd.DataFrame:
         print_error(f"File \"{path}\" not found")
         sys.exit(1)
     print_debug(f"Reading data from file \"{path}\"...")
-    return pd.read_csv(path)
+    df = pd.read_csv(path)
+    return df
+
+
+def clip_data_to_timeframe(df: pd.DataFrame, range: Tuple[int, int]) -> pd.DataFrame:
+    return df[df["relative_time_min"].between(range[0], range[1])]
 
 
 def mean_of_col(df: pd.DataFrame, col: str, dec_acc: int = 2) -> float:
+    if CLIP:
+        df = clip_data_to_timeframe(df, TIMEFRAME)
+    print_debug(f"{col} mean: {df[col].describe()["mean"]}")
     return round(df.loc[:, col].mean(), dec_acc)
 
 
@@ -67,17 +81,20 @@ def main():
     for c in CLUSTERS:
         # calculate mean rps
         df = get_data_from_path(f"data/{c}/mean_rps_{TEST_TYPE.lower()}.csv")
-        data[c].update({"rps": mean_of_col(df, "rps", 0)})
+        df.describe()
+        data[c].update({"rps": mean_of_col(df, "rps")})
 
         # calculate mean latency/p95 latency
-        df = get_data_from_path(f"data/{c}/http_latency_{TEST_TYPE.lower()}.csv")
-        data[c].update({"latency": mean_of_col(df, "mean avg duration (ms)") / 60})
-        data[c].update({"p95_latency": mean_of_col(df, "mean p95 latency (ms)") / 60})
+        df1 = get_data_from_path(f"data/{c}/http_latency_{TEST_TYPE.lower()}.csv")
+        df1.describe()
+        data[c].update({"latency": mean_of_col(df1, "mean avg duration (ms)") / 1_000})
+        data[c].update({"p95_latency": mean_of_col(df1, "mean p95 latency (ms)") / 1_000})
 
         # calculate mean of CPU/RAM usage
-        df = get_data_from_path(f"./data/{c}/{TEST_TYPE.lower()}_node_merged_df.csv")
-        data[c].update({"cpu_usage": mean_of_multiple_cols(df, "CPU")})
-        data[c].update({"ram_usage": mean_of_multiple_cols(df, "Memory")})
+        df2 = get_data_from_path(f"./data/{c}/{TEST_TYPE.lower()}_node_merged_df.csv")
+        df2.describe()
+        data[c].update({"cpu_usage": mean_of_multiple_cols(df2, "CPU")})
+        data[c].update({"ram_usage": mean_of_multiple_cols(df2, "Memory")})
 
     pprint_data(data)
 
