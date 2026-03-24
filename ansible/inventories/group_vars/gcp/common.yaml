@@ -24,7 +24,7 @@
 cloud_name: gcp
 
 # GCP
-gcp_region: europe-central2 # Warsaw
+gcp_region: europe-west3
 gcp_project_id: "{{ vault_gcp_project_id }}"
 
 # GKE
