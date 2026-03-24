@@ -1,4 +1,4 @@
-# Deploy Boutique Application on EKS
+# !!! OBSOLETE !!! Deploy Boutique Application on EKS
 
 ## 0. Prerequisites
 
