@@ -1,4 +1,4 @@
-# !!! OBSOLETE !!! Deploy Boutique Application on EKS
+# Deploy Boutique Application on EKS
 
 ## 0. Prerequisites
 
@@ -21,34 +21,7 @@ Click `Next`.
 ![](./images/eks/002_eks.png)
 
 On the next page (***"Set permissions"***), select `Attach policies directly`.
-Above the list of policies, click the `Create policy` button. This will open a new browser tab.
-
-![](./images/eks/003_eks.png)
-
-In the new tab, select the `JSON` editor.
-Delete all the existing content and paste the following JSON policy. 
-This policy gives Terraform permissions to manage EKS, VPC, EC2, IAM roles, and S3, and is much safer than AdministratorAccess.
-
-Click `Next`.
-
-![](./images/eks/004_eks.png)
-
-
-Give the policy a name, for example, `TerraformEKSFullPolicy`.
-
-Click `Create policy`.
-
-![](./images/eks/005_eks.png)
-
-Now, return to the original browser tab where you were creating the user.
-
-Click the Refresh button (the circular arrow icon) above the list of policies.
-
-In the search bar, type the name of your new policy (e.g., `TerraformEKSFullPolicy`).
-
-Check the box next to your new policy.
-
-![](./images/eks/006_eks.png)
+From the list of policies, select `Administrator Access`
 
 Click `Next` until the user is created.
 
@@ -121,6 +94,9 @@ ansible-vault encrypt ansible/inventories/group_vars/aws/vault.yaml
 ## 8. Run Ansible Automation
 
 Navigate to the `ansible/` directory and execute the playbooks below in order.
+```sh
+cd ansible
+```
 
 ### 8.1. Create Terraform State S3 Bucket
 
@@ -129,16 +105,9 @@ This creates an S3 bucket for storing Terraform state files.
 ansible-playbook -i inventories/prod.ini playbooks/aws/tfstate_bucket/create.yaml -v --ask-vault-pass
 ```
 
-### 8.2. Create VPC
+### 8.2. Deploy Application
 
-Create a dedicated VPC with subnets and security groups for the cluster:
-```sh
-ansible-playbook -i inventories/prod.ini playbooks/aws/vpc/create.yaml -v --ask-vault-pass
-```
-
-### 8.3. Deploy Application
-
-Creates the EKS cluster, worker nodes, and deploys the Boutique app via Helm.
+Creates the VPC, EKS cluster, worker nodes, and deploys the Boutique app via Helm.
 ```sh
 ansible-playbook -i inventories/prod.ini playbooks/aws/create_boutique.yaml -v --ask-vault-pass
 ```
@@ -146,7 +115,7 @@ ansible-playbook -i inventories/prod.ini playbooks/aws/create_boutique.yaml -v -
 At the end, you will receive a public endpoint to access the application, for example:
 https://a1b2c3d4e5f6g7h8.elb.us-east-1.amazonaws.com/
 
-Connect to EKS Cluster using local kubectl
+### 8.3. Connect to EKS Cluster using local kubectl
 
 Ensure you have `kubectl` and `aws-iam-authenticator` installed.
 
