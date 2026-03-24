@@ -77,16 +77,23 @@ spec:
           value: "9555"
         resources:
           {{- toYaml .Values.adService.resources | nindent 10 }}
-        readinessProbe:
-          initialDelaySeconds: 20
-          periodSeconds: 15
-          grpc:
-            port: 9555
-        livenessProbe:
-          initialDelaySeconds: 20
-          periodSeconds: 15
-          grpc:
-            port: 9555
+        # startupProbe:
+        #   grpc:
+        #     port: 9555
+        #   failureThreshold: 30
+        #   periodSeconds: 2
+        # readinessProbe:
+        #   initialDelaySeconds: 40
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   grpc:
+        #     port: 9555
+        # livenessProbe:
+        #   initialDelaySeconds: 40
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   grpc:
+        #     port: 9555
 ---
 apiVersion: v1
 kind: Service

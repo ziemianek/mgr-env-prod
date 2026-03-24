@@ -20,6 +20,12 @@
 # © 2025 Michał Ziemianek. All rights reserved.
 ########################################################################################
 
+variable "region" {
+  description = "AWS region"
+  type        = string
+  nullable    = false
+}
+
 variable "app_name" {
   description = "Application  name"
   type        = string
